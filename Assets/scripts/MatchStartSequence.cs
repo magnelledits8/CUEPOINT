@@ -11,7 +11,14 @@ public class MatchStartSequence : MonoBehaviour
     [Header("Animation & Ljud")]
     [SerializeField] public Sprite[] countdownFrames;
     public AudioSource countdownAudio;
-    public float framesPerSecond = 60f; // Ändra denna (t.ex. 77.8) – koden fixar ljudet automatiskt nu!
+    public float framesPerSecond = 60f;
+
+    // --- NYA VARIABLER FÖR MUSIK ---
+    [Header("Bakgrundsmusik")]
+    public AudioSource backgroundMusicAudio;
+    [Tooltip("Tid i sekunder baserat på när animationen STARTAR. Negativt värde = överlappning innan animationen är slut.")]
+    public float musicDelayRelativeAndAnimation = 2.0f;
+    // -------------------------------
 
     [Header("Kontrollpanelen (Tid i sekunder)")]
     public float loadWaitDuration = 1.1f;
@@ -39,12 +46,10 @@ public class MatchStartSequence : MonoBehaviour
             countdownDisplay.color = c;
         }
 
-        // Automatisk Pitch-justering av ljudet så det matchar din nya FPS (77.8)!
-        // Standard i Unity och de flesta videor är 60 FPS.
         if (countdownAudio != null && framesPerSecond > 0f)
         {
             float targetPitch = framesPerSecond / 60f;
-            countdownAudio.pitch = targetPitch; // Ändrar ljudets hastighet automatiskt
+            countdownAudio.pitch = targetPitch;
         }
 
         StartCoroutine(MasterSequence());
@@ -57,6 +62,9 @@ public class MatchStartSequence : MonoBehaviour
         StartCoroutine(FadeBlackScreen());
         StartCoroutine(PlayCountdownAnimation());
         StartCoroutine(PlayAudioWithDelay());
+
+        // --- STARTA MUSIKEN HÄR ---
+        StartCoroutine(PlayMusicWithDelay());
     }
 
     IEnumerator FadeBlackScreen()
@@ -87,6 +95,35 @@ public class MatchStartSequence : MonoBehaviour
         }
     }
 
+    // --- NY COROUTINE FÖR ATT SPELA MUSIKEN ---
+    IEnumerator PlayMusicWithDelay()
+    {
+        // Vi väntar först på countdownDelay så vi synkar med när animationen faktiskt startar synligt
+        if (countdownDelay > 0f)
+        {
+            yield return new WaitForSeconds(countdownDelay);
+        }
+
+        // Räkna ut den totala längden på animationen
+        float totalAnimationDuration = countdownFrames.Length / framesPerSecond;
+
+        // Räkna ut när musiken ska starta i förhållande till animationens start
+        // Om du sätter t.ex. musicDelayRelativeAndAnimation till 2.0 så väntar den 2 sekunder in i animationen.
+        // Vill du ha det exakt vid slut: sätt värdet till samma som totalAnimationDuration.
+        // Vill du ha överlappning (t.ex. 1 sekund innan slut): sätt värdet till (totalAnimationDuration - 1.0f).
+        float actualWaitTime = musicDelayRelativeAndAnimation;
+
+        if (actualWaitTime > 0f)
+        {
+            yield return new WaitForSeconds(actualWaitTime);
+        }
+
+        if (backgroundMusicAudio != null)
+        {
+            backgroundMusicAudio.Play();
+        }
+    }
+
     IEnumerator PlayCountdownAnimation()
     {
         if (countdownDelay > 0f)
@@ -112,19 +149,21 @@ public class MatchStartSequence : MonoBehaviour
                 startFrame = Mathf.Min(framesToSkip, countdownFrames.Length - 1);
             }
 
+            PlayerCinematicIntro playerIntro = Object.FindFirstObjectByType<PlayerCinematicIntro>();
+
             for (int i = startFrame; i < countdownFrames.Length; i++)
             {
                 countdownDisplay.sprite = countdownFrames[i];
+
+                if (playerIntro != null)
+                {
+                    playerIntro.CheckFrameTrigger(i);
+                }
+
                 yield return new WaitForSeconds(timePerFrame);
             }
 
             countdownDisplay.gameObject.SetActive(false);
-            StartMatch();
         }
-    }
-
-    void StartMatch()
-    {
-        Debug.Log("Nedräkning klar!");
     }
 }
