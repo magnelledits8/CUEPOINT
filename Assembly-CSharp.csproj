@@ -51,6 +51,7 @@
   <ItemGroup>
     <Compile Include="Assets\TextMesh Pro\Examples &amp; Extras\Scripts\TMP_TextEventHandler.cs" />
     <Compile Include="Assets\SmartPoint\Examples\Scripts\CP_VisualsHelperExample.cs" />
+    <Compile Include="Assets\scripts\Hazard\DeathZone.cs" />
     <Compile Include="Assets\StylizedCore\StylizedWoodMonsters\URP\AnimationGallery\Scripts\Camera\ViewerCameraController.cs" />
     <Compile Include="Assets\TextMesh Pro\Examples &amp; Extras\Scripts\EnvMapAnimator.cs" />
     <Compile Include="Assets\SmartPoint\Core\Utility\EditorUtility.cs" />
@@ -59,9 +60,9 @@
     <Compile Include="Assets\SmartPoint\Core\Scripts\CollisionEvent.cs" />
     <Compile Include="Assets\TextMesh Pro\Examples &amp; Extras\Scripts\Benchmark02.cs" />
     <Compile Include="Assets\SmartPoint\Core\Scripts\CheckpointTrigger.cs" />
-    <Compile Include="Assets\scripts\DelayedMusicStart.cs" />
+    <Compile Include="Assets\scripts\Targets\SpiralTarget3DController.cs" />
     <Compile Include="Assets\Starter Assets\Runtime\InputSystem\StarterAssetsInputs.cs" />
-    <Compile Include="Assets\scripts\MatchStartSequence.cs" />
+    <Compile Include="Assets\scripts\StartSequence\MatchStartSequence.cs" />
     <Compile Include="Assets\SmartPoint\Core\Scripts\OutOfBoundsHelper.cs" />
     <Compile Include="Assets\Starter Assets\Runtime\Common\BasicRigidBodyPush.cs" />
     <Compile Include="Assets\Starter Assets\Runtime\Mobile\Scripts\Utilities\MobileDisableAutoSwitchControls.cs" />
@@ -77,6 +78,7 @@
     <Compile Include="Assets\SmartPoint\Examples\Scripts\CP_PlayerExample.cs" />
     <Compile Include="Assets\SmartPoint\Core\Utility\MathUtility.cs" />
     <Compile Include="Assets\TextMesh Pro\Examples &amp; Extras\Scripts\VertexJitter.cs" />
+    <Compile Include="Assets\scripts\Targets\TorusSplitter.cs" />
     <Compile Include="Assets\TextMesh Pro\Examples &amp; Extras\Scripts\TMP_UiFrameRateCounter.cs" />
     <Compile Include="Assets\TextMesh Pro\Examples &amp; Extras\Scripts\VertexZoom.cs" />
     <Compile Include="Assets\scripts\Player\PlayerDeathHandler.cs" />
@@ -87,17 +89,17 @@
     <Compile Include="Assets\TextMesh Pro\Examples &amp; Extras\Scripts\TMP_TextSelector_B.cs" />
     <Compile Include="Assets\TextMesh Pro\Examples &amp; Extras\Scripts\SkewTextExample.cs" />
     <Compile Include="Assets\TextMesh Pro\Examples &amp; Extras\Scripts\WarpTextExample.cs" />
+    <Compile Include="Assets\Nokobot\Modern Guns - Handgun\_Demo Assets\SimpleShoot.cs" />
     <Compile Include="Assets\SmartPoint\Examples\Scripts\CP_BulletHelper.cs" />
     <Compile Include="Assets\TextMesh Pro\Examples &amp; Extras\Scripts\ShaderPropAnimator.cs" />
     <Compile Include="Assets\scripts\Player\PlayerJumpAndCrouch.cs" />
     <Compile Include="Assets\scripts\Player\Unused\capsule movement.cs" />
-    <Compile Include="Assets\scripts\PlayerShooting.cs" />
-    <Compile Include="Assets\scripts\Cameralookplayer.cs" />
     <Compile Include="Assets\TextMesh Pro\Examples &amp; Extras\Scripts\TMP_TextInfoDebugTool.cs" />
+    <Compile Include="Assets\scripts\Player\PlayerShooting.cs" />
     <Compile Include="Assets\TextMesh Pro\Examples &amp; Extras\Scripts\VertexShakeA.cs" />
     <Compile Include="Assets\SmartPoint\Core\Scripts\Entity.cs" />
-    <Compile Include="Assets\scripts\DeathZone.cs" />
     <Compile Include="Assets\SciFi Warehouse Kit\Demo\Scripts\PlayRandomSound.cs" />
+    <Compile Include="Assets\scripts\Player\MouseLook.cs" />
     <Compile Include="Assets\TextMesh Pro\Examples &amp; Extras\Scripts\Benchmark01_UGUI.cs" />
     <Compile Include="Assets\TextMesh Pro\Examples &amp; Extras\Scripts\SimpleScript.cs" />
     <Compile Include="Assets\TextMesh Pro\Examples &amp; Extras\Scripts\Benchmark04.cs" />
@@ -111,8 +113,8 @@
     <Compile Include="Assets\TutorialInfo\Scripts\Readme.cs" />
     <Compile Include="Assets\TextMesh Pro\Examples &amp; Extras\Scripts\Benchmark01.cs" />
     <Compile Include="Assets\TextMesh Pro\Examples &amp; Extras\Scripts\TextMeshSpawner.cs" />
+    <Compile Include="Assets\Gun and Sound\WeaponController.cs" />
     <Compile Include="Assets\Starter Assets\Runtime\Mobile\Scripts\VirtualInput.cs" />
-    <Compile Include="Assets\scripts\Player\PlayerCinematicIntro.cs" />
     <Compile Include="Assets\Starter Assets\Runtime\ThirdPersonController\Scripts\ThirdPersonController.cs" />
     <Compile Include="Assets\SciFi Warehouse Kit\Demo\Scripts\MouseComponent.cs" />
     <Compile Include="Assets\TextMesh Pro\Examples &amp; Extras\Scripts\CameraController.cs" />
@@ -127,8 +129,6 @@
     <Compile Include="Assets\scripts\Rowbuilder.cs" />
     <Compile Include="Assets\SmartPoint\Core\Scripts\GlobalSettings.cs" />
     <Compile Include="Assets\StylizedCore\StylizedWoodMonsters\URP\AnimationGallery\Scripts\Effects\AnimationEffects.cs" />
-    <Compile Include="Assets\scripts\SpiralTarget3DController.cs" />
-    <Compile Include="Assets\scripts\TorusSplitter.cs" />
     <Compile Include="Assets\StylizedCore\StylizedWoodMonsters\URP\AnimationGallery\Scripts\Entities\SummonedMinion.cs" />
     <Compile Include="Assets\TextMesh Pro\Examples &amp; Extras\Scripts\ObjectSpin.cs" />
     <Compile Include="Assets\TextMesh Pro\Examples &amp; Extras\Scripts\TMP_PhoneNumberValidator.cs" />
@@ -136,12 +136,16 @@
     <Compile Include="Assets\TextMesh Pro\Examples &amp; Extras\Scripts\TextConsoleSimulator.cs" />
     <Compile Include="Assets\SmartPoint\Core\Scripts\CheckPoint.cs" />
     <Compile Include="Assets\TextMesh Pro\Examples &amp; Extras\Scripts\TeleType.cs" />
-    <Compile Include="Assets\scripts\Player\PlayerLaneMovement.cs" />
     <Compile Include="Assets\TextMesh Pro\Examples &amp; Extras\Scripts\TMP_TextEventCheck.cs" />
+    <Compile Include="Assets\scripts\Player\PlayerRunController.cs" />
+    <Compile Include="Assets\scripts\StartSequence\DelayedMusicStart.cs" />
     <Compile Include="Assets\SmartPoint\Core\Scripts\ProximityChecker.cs" />
     <Compile Include="Assets\TextMesh Pro\Examples &amp; Extras\Scripts\TextMeshProFloatingText.cs" />
     <Compile Include="Assets\SmartPoint\Core\Scripts\SpawnController.cs" />
     <Compile Include="Assets\SmartPoint\Examples\Scripts\CP_BulletExample.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Assets\Nokobot\Modern Guns - Handgun\README.txt" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="UnityEngine">

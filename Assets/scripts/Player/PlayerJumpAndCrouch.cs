@@ -17,7 +17,7 @@ public class PlayerJumpAndCrouch : MonoBehaviour
     public float slideDuration = 0.5f;
 
     private Rigidbody rb;
-    private PlayerLaneMovement laneMove;
+    private PlayerRunController laneMove; // UPPDATERAD TILL DITT NYA SKRIPT
     private bool isGrounded;
     private bool isSliding = false;
     private float slideTimer = 0f;
@@ -26,7 +26,7 @@ public class PlayerJumpAndCrouch : MonoBehaviour
     void Awake()
     {
         rb = GetComponent<Rigidbody>();
-        laneMove = GetComponent<PlayerLaneMovement>();
+        laneMove = GetComponent<PlayerRunController>(); // UPPDATERAD TILL DITT NYA SKRIPT
 
         if (rb != null)
         {
@@ -38,7 +38,7 @@ public class PlayerJumpAndCrouch : MonoBehaviour
 
     void Update()
     {
-        // Om spelet eller introt inte är igång rullar vi inte
+        // Tillåt bara hopp och slides om introt är över och koden har börjat köra spelaren framåt!
         if (laneMove == null || !laneMove.hasStartedRunning) return;
 
         isGrounded = Physics.Raycast(transform.position, Vector3.down, (transform.localScale.y * 1.1f));
