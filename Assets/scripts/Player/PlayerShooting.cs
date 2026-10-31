@@ -3,7 +3,7 @@ using UnityEngine.InputSystem;
 
 public class PlayerShooting : MonoBehaviour
 {
-    [Header("Skjutinställningar")]
+    [Header("Skjutinställningar (Osynlig logik)")]
     public float range = 100f;
     public Camera fpsCam;
 
@@ -13,29 +13,23 @@ public class PlayerShooting : MonoBehaviour
     public int crosshairSize = 10;
     public int crosshairThickness = 2;
 
-    [Header("Effekter (Valfritt)")]
-    public ParticleSystem muzzleFlash;
-
     void Update()
     {
+        // Rita en röd linje i Scene-vyn för att hjälpa dig se din osynliga raycast
         if (fpsCam != null)
         {
             Debug.DrawRay(fpsCam.transform.position, fpsCam.transform.forward * range, Color.red);
         }
 
+        // Registrera skott exakt när man klickar (Vapnets egna skript sköter eldhastigheten separat)
         if (Mouse.current != null && Mouse.current.leftButton.wasPressedThisFrame)
         {
-            Shoot();
+            ShootRaycast();
         }
     }
 
-    void Shoot()
+    void ShootRaycast()
     {
-        if (muzzleFlash != null)
-        {
-            muzzleFlash.Play();
-        }
-
         if (fpsCam == null)
         {
             Debug.LogError("Du måste dra in din kamera i fältet 'Fps Cam' på PlayerShooting-skriptet!");
@@ -44,11 +38,12 @@ public class PlayerShooting : MonoBehaviour
 
         RaycastHit hit;
 
+        // Skjut den helt osynliga laserstrålen rakt fram ur kameran
         if (Physics.Raycast(fpsCam.transform.position, fpsCam.transform.forward, out hit, range))
         {
-            Debug.Log("Träffade i 3D-rymden: " + hit.transform.name);
+            Debug.Log("Osynlig träff i 3D-rymden: " + hit.transform.name);
 
-            // OPTIMERING: Sök direkt efter målet på det träffade objektets collider för bättre FPS-stabilitet
+            // Sök efter ditt mål-skript på objektet du träffade
             SpiralTarget3DController target = hit.transform.GetComponent<SpiralTarget3DController>();
 
             if (target != null)
@@ -75,6 +70,7 @@ public class PlayerShooting : MonoBehaviour
         Texture2D texture = Texture2D.whiteTexture;
         GUI.color = crosshairColor;
 
+        // Rita ut det gröna 2D-siktet mitt på skärmen
         GUI.DrawTexture(new Rect(screenCenter.x - crosshairSize, screenCenter.y - (crosshairThickness / 2f), crosshairSize * 2, crosshairThickness), texture);
         GUI.DrawTexture(new Rect(screenCenter.x - (crosshairThickness / 2f), screenCenter.y - crosshairSize, crosshairThickness, crosshairSize * 2), texture);
     }

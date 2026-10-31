@@ -3,16 +3,16 @@
   "WorkspaceRootPath": "D:\\CUEPOINT\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{B4CD19DA-EE08-5225-FB19-1D0DFA4113DD}|Assembly-CSharp.csproj|d:\\cuepoint\\assets\\gun and sound\\weaponcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{B4CD19DA-EE08-5225-FB19-1D0DFA4113DD}|Assembly-CSharp.csproj|solutionrelative:assets\\gun and sound\\weaponcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{B4CD19DA-EE08-5225-FB19-1D0DFA4113DD}|Assembly-CSharp.csproj|d:\\cuepoint\\assets\\scripts\\player\\playershooting.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{B4CD19DA-EE08-5225-FB19-1D0DFA4113DD}|Assembly-CSharp.csproj|solutionrelative:assets\\scripts\\player\\playershooting.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|D:\\CUEPOINT\\Assets\\Gun and Sound\\WeaponController.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:Assets\\Gun and Sound\\WeaponController.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{B4CD19DA-EE08-5225-FB19-1D0DFA4113DD}|Assembly-CSharp.csproj|d:\\cuepoint\\assets\\scripts\\player\\mouselook.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{B4CD19DA-EE08-5225-FB19-1D0DFA4113DD}|Assembly-CSharp.csproj|solutionrelative:assets\\scripts\\player\\mouselook.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|D:\\CUEPOINT\\Assets\\scripts\\Player\\PlayerJumpAndCrouch.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:Assets\\scripts\\Player\\PlayerJumpAndCrouch.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{B4CD19DA-EE08-5225-FB19-1D0DFA4113DD}|Assembly-CSharp.csproj|d:\\cuepoint\\assets\\scripts\\player\\playerruncontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
@@ -25,6 +25,10 @@
     {
       "AbsoluteMoniker": "D:0:0:{B4CD19DA-EE08-5225-FB19-1D0DFA4113DD}|Assembly-CSharp.csproj|d:\\cuepoint\\assets\\scripts\\startsequence\\matchstartsequence.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{B4CD19DA-EE08-5225-FB19-1D0DFA4113DD}|Assembly-CSharp.csproj|solutionrelative:assets\\scripts\\startsequence\\matchstartsequence.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{B4CD19DA-EE08-5225-FB19-1D0DFA4113DD}|Assembly-CSharp.csproj|d:\\cuepoint\\assets\\scripts\\player\\playerjumpandcrouch.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{B4CD19DA-EE08-5225-FB19-1D0DFA4113DD}|Assembly-CSharp.csproj|solutionrelative:assets\\scripts\\player\\playerjumpandcrouch.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     }
   ],
   "DocumentGroupContainers": [
@@ -39,19 +43,19 @@
             {
               "$type": "Document",
               "DocumentIndex": 0,
-              "Title": "WeaponController.cs",
-              "DocumentMoniker": "D:\\CUEPOINT\\Assets\\Gun and Sound\\WeaponController.cs",
-              "RelativeDocumentMoniker": "Assets\\Gun and Sound\\WeaponController.cs",
-              "ToolTip": "D:\\CUEPOINT\\Assets\\Gun and Sound\\WeaponController.cs",
-              "RelativeToolTip": "Assets\\Gun and Sound\\WeaponController.cs",
-              "ViewState": "AgIAAFAAAAAAAAAAAAAUwIsAAAAAAAAAAAAAAA==",
+              "Title": "PlayerShooting.cs",
+              "DocumentMoniker": "D:\\CUEPOINT\\Assets\\scripts\\Player\\PlayerShooting.cs",
+              "RelativeDocumentMoniker": "Assets\\scripts\\Player\\PlayerShooting.cs",
+              "ToolTip": "D:\\CUEPOINT\\Assets\\scripts\\Player\\PlayerShooting.cs",
+              "RelativeToolTip": "Assets\\scripts\\Player\\PlayerShooting.cs",
+              "ViewState": "AgIAABIAAAAAAAAAAAAUwE0AAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-10-30T23:18:51.847Z",
+              "WhenOpened": "2026-10-31T12:28:58.392Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 1,
+              "DocumentIndex": 2,
               "Title": "MouseLook.cs",
               "DocumentMoniker": "D:\\CUEPOINT\\Assets\\scripts\\Player\\MouseLook.cs",
               "RelativeDocumentMoniker": "Assets\\scripts\\Player\\MouseLook.cs",
@@ -59,8 +63,7 @@
               "RelativeToolTip": "Assets\\scripts\\Player\\MouseLook.cs",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAC0AAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-10-30T18:53:37.525Z",
-              "EditorCaption": ""
+              "WhenOpened": "2026-10-30T18:53:37.525Z"
             },
             {
               "$type": "Document",
@@ -100,7 +103,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 2,
+              "DocumentIndex": 6,
               "Title": "PlayerJumpAndCrouch.cs",
               "DocumentMoniker": "D:\\CUEPOINT\\Assets\\scripts\\Player\\PlayerJumpAndCrouch.cs",
               "RelativeDocumentMoniker": "Assets\\scripts\\Player\\PlayerJumpAndCrouch.cs",
@@ -108,7 +111,19 @@
               "RelativeToolTip": "Assets\\scripts\\Player\\PlayerJumpAndCrouch.cs",
               "ViewState": "AgIAADQAAAAAAAAAAAAUwG8AAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-10-30T20:51:34.848Z",
+              "WhenOpened": "2026-10-30T20:51:34.848Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "WeaponController.cs",
+              "DocumentMoniker": "D:\\CUEPOINT\\Assets\\Gun and Sound\\WeaponController.cs",
+              "RelativeDocumentMoniker": "Assets\\Gun and Sound\\WeaponController.cs",
+              "ToolTip": "D:\\CUEPOINT\\Assets\\Gun and Sound\\WeaponController.cs",
+              "RelativeToolTip": "Assets\\Gun and Sound\\WeaponController.cs",
+              "ViewState": "AgIAAH0AAAAAAAAAAAAswLcAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-10-31T11:22:16.965Z",
               "EditorCaption": ""
             }
           ]
