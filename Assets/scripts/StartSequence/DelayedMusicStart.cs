@@ -4,8 +4,8 @@ using UnityEngine;
 [RequireComponent(typeof(AudioSource))]
 public class DelayedMusicStart : MonoBehaviour
 {
-    [Header("Inställningar för överlappning")]
-    [Tooltip("Hur många sekunder INNAN nedräkningen är helt klar ska låten tjuvstarta?")]
+    [Header("Overlap Settings")]
+    [Tooltip("How many seconds BEFORE the countdown is fully completed should the song early start?")]
     public float overlapSeconds = 0.7f;
 
     private AudioSource musicAudio;
@@ -33,23 +33,23 @@ public class DelayedMusicStart : MonoBehaviour
 
     IEnumerator WaitAndPlay(MatchStartSequence seq)
     {
-        // Vänta på laddningstiden
+        // Wait for loading duration
         yield return new WaitForSeconds(seq.loadWaitDuration);
 
-        // Vänta på eventuell fördröjning på animationen
+        // Wait for any countdown delay animation
         if (seq.countdownDelay > 0f)
         {
             yield return new WaitForSeconds(seq.countdownDelay);
         }
 
-        // Räkna ut animationens totala längd dynamiskt baserat på reella sekunder
+        // Calculate the total duration of the animation dynamically based on real seconds
         float animDuration = 0f;
         if (seq.countdownFrames != null && seq.framesPerSecond > 0f)
         {
             animDuration = seq.countdownFrames.Length / seq.framesPerSecond;
         }
 
-        // Säkra att speltiden synkas perfekt i realtid oberoende av bildrutor
+        // Ensure playback time matches perfectly in real-time independent of frames
         float finalWaitTime = animDuration - overlapSeconds;
 
         if (finalWaitTime > 0f)

@@ -1,13 +1,13 @@
 using UnityEngine;
-using UnityEngine.SceneManagement; // Krävs för att ladda om banan
+using UnityEngine.SceneManagement; // Required to reload the scene
 
 public class DeathZone : MonoBehaviour
 {
-    // Denna funktion körs direkt när något rör vid vår osynliga box
+    // This function runs automatically when something touches our invisible trigger box
     private void OnTriggerEnter(Collider other)
     {
-        // Vi kollar om det som trillade ner faktiskt är spelaren
-        // (Se till att din spelare har tagen "Player" längst upp i Inspectorn!)
+        // Check if the object that fell down is actually the player
+        // (Make sure your player has the "Player" tag at the top of the Inspector!)
         if (other.CompareTag("Player"))
         {
             RestartLevel();
@@ -16,10 +16,10 @@ public class DeathZone : MonoBehaviour
 
     private void RestartLevel()
     {
-        // Hämtar namnet på den bana du är på just nu
+        // Gets the name of the current active scene
         string currentSceneName = SceneManager.GetActiveScene().name;
 
-        // Laddar om hela banan från sekund noll (startar om sekvensen och musiken)
+        // Reloads the entire scene from second zero (restarts gameplay and music)
         SceneManager.LoadScene(currentSceneName);
     }
 }

@@ -2,26 +2,26 @@ using UnityEngine;
 
 public class GraphicSpawnerLoop : MonoBehaviour
 {
-    [Header("1. Välj modell och antal:")]
+    [Header("1. Select model and amount:")]
     public GameObject objectPrefab;       // Model i want to duplicate
     public int totalAmount = 20;          // How many object I want the loop to create
-    [Header("2. Spridning (Density):")]
+    [Header("2. Spread (Density):")]
     public float spawnRadius = 10f;       // Radious of objects
 
-    [Header("3. Slumpmässig storlek (Randomness):")]
+    [Header("3. Random size (Randomness):")]
     public float minScale = 0.5f;         // Smallest size
     public float maxScale = 2.0f;         // Biggest size
 
     void Start()
     {
-        // Safty check
+        // Safety check
         if (objectPrefab == null)
         {
-            Debug.LogWarning("Du har glömt att lägga till en modell i objectPrefab-rutan!");
+            Debug.LogWarning("You forgot to add a model to the objectPrefab slot!");
             return;
         }
 
-       //For-loop multiply object
+        //For-loop multiply object
         for (int i = 0; i < totalAmount; i++)
         {
             // random posistion of object

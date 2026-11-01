@@ -129,7 +129,9 @@ public class SpiralTarget3DController : MonoBehaviour
 
     public bool TryShoot()
     {
-        if (state != TargetState.Ready)
+        // FIX: If the target's game object has already been deactivated in the hierarchy, cancel instantly.
+        // This prevents Unity from throwing an error when trying to start a Coroutine on an inactive object.
+        if (!gameObject.activeInHierarchy || state != TargetState.Ready)
             return false;
 
         state = TargetState.Hit;
@@ -150,7 +152,7 @@ public class SpiralTarget3DController : MonoBehaviour
         for (int i = FirstHitIndex; i < lastIndex; i++)
         {
             SetFrame(i);
-            yield return new WaitForSeconds(delay); // Helt tidsbaserad frame-växling, stabil i alla FPS
+            yield return new WaitForSeconds(delay); // Fully time-based frame swapping, stable across all FPS
         }
 
         state = TargetState.Finished;

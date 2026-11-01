@@ -4,25 +4,25 @@ using UnityEngine.UI;
 
 public class MatchStartSequence : MonoBehaviour
 {
-    [Header("UI Element")]
+    [Header("UI Elements")]
     public Image blackScreen;
     public Image countdownDisplay;
 
-    [Header("Animation & Ljud")]
+    [Header("Animation & Audio")]
     [SerializeField] public Sprite[] countdownFrames;
     public AudioSource countdownAudio;
     public float framesPerSecond = 60f;
 
-    [Header("Bakgrundsmusik")]
+    [Header("Background Music")]
     public AudioSource backgroundMusicAudio;
-    [Tooltip("Tid i sekunder baserat på när animationen STARTAR. Negativt värde = överlappning innan animationen är slut.")]
+    [Tooltip("Time in seconds based on when the animation STARTS. Negative value = overlap before the animation finishes.")]
     public float musicDelayRelativeAndAnimation = 2.0f;
 
-    [Header("Kontrollpanelen (Tid i sekunder)")]
+    [Header("Control Panel (Time in seconds)")]
     public float loadWaitDuration = 1.1f;
     public float fadeDuration = 3.1f;
 
-    [Header("Finjustering (Tid i sekunder)")]
+    [Header("Fine-Tuning (Time in seconds)")]
     public float countdownDelay = -0.42f;
     public float audioDelay = -0.42f;
 
@@ -136,7 +136,7 @@ public class MatchStartSequence : MonoBehaviour
                 startFrame = Mathf.Min(framesToSkip, countdownFrames.Length - 1);
             }
 
-            // SYNKKORREKTION: Letar nu efter det nya klassnamnet PlayerRunController!
+            // SYNC CORRECTION: Now looks for the new class name PlayerRunController!
             PlayerRunController laneMove = Object.FindFirstObjectByType<PlayerRunController>();
             if (laneMove != null)
             {

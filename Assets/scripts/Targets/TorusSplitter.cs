@@ -2,16 +2,16 @@ using UnityEngine;
 
 public class TorusSplitter : MonoBehaviour
 {
-    [Header("Inställningar för uppdelning")]
-    [Tooltip("Dra in din hela ProBuilder Torus här (efter att du kört Strip ProBuilder Scripts)")]
+    [Header("Split Settings")]
+    [Tooltip("Drag your complete ProBuilder Torus here (after running 'Strip ProBuilder Scripts')")]
     public GameObject torusObject;
 
-    [ContextMenu("Dela upp Torusen i 7 bitar")]
+    [ContextMenu("Split Torus into 7 Pieces")]
     public void SplitTorusIntoSeven()
     {
         if (torusObject == null)
         {
-            Debug.LogError("Du måste dra in ett Torus-objekt i fältet!");
+            Debug.LogError("You must drag a Torus object into the slot!");
             return;
         }
 
@@ -20,11 +20,11 @@ public class TorusSplitter : MonoBehaviour
 
         if (originalMeshFilter == null || originalMeshRenderer == null || originalMeshFilter.sharedMesh == null)
         {
-            Debug.LogError("Objektet måste ha ett MeshFilter med en giltig Mesh och en MeshRenderer!");
+            Debug.LogError("The object must have a MeshFilter with a valid Mesh and a MeshRenderer!");
             return;
         }
 
-        // 1. Städa bort gamla försök automatisk
+        // 1. Clean up old attempts automatically
         Transform parentTransform = torusObject.transform.parent;
         Transform oldRoot = parentTransform != null ? parentTransform.Find("TorusBits7_Root") : null;
         if (oldRoot != null) DestroyImmediate(oldRoot.gameObject);
@@ -34,7 +34,7 @@ public class TorusSplitter : MonoBehaviour
             if (globalOldRoot != null) DestroyImmediate(globalOldRoot);
         }
 
-        // 2. Skapa den nya rena föräldern
+        // 2. Create the new clean parent
         GameObject root = new GameObject("TorusBits7_Root");
         if (parentTransform != null) root.transform.SetParent(parentTransform, false);
         root.transform.position = torusObject.transform.position;
@@ -49,34 +49,34 @@ public class TorusSplitter : MonoBehaviour
         int chunksCount = 7;
         float angleStep = 360f / chunksCount;
 
-        // 3. Dela upp meshen i 7 faktiska tårtbitar baserat på vinklar
+        // 3. Split the mesh into 7 actual wedge pieces based on angles
         for (int i = 0; i < chunksCount; i++)
         {
             float startAngle = i * angleStep;
             float endAngle = (i + 1) * angleStep;
 
-            // Skapa listor för den här specifika bitens mesh-data
+            // Create lists for this specific piece's mesh data
             System.Collections.Generic.List<Vector3> newVertices = new System.Collections.Generic.List<Vector3>();
             System.Collections.Generic.List<int> newTriangles = new System.Collections.Generic.List<int>();
             System.Collections.Generic.List<Vector2> newUvs = new System.Collections.Generic.List<Vector2>();
             System.Collections.Generic.List<Vector3> newNormals = new System.Collections.Generic.List<Vector3>();
             System.Collections.Generic.Dictionary<int, int> vertMap = new System.Collections.Generic.Dictionary<int, int>();
 
-            // Loopa igenom alla trianglar i originalet
+            // Loop through all triangles in the original mesh
             for (int t = 0; t < triangles.Length; t += 3)
             {
                 int i0 = triangles[t];
                 int i1 = triangles[t + 1];
                 int i2 = triangles[t + 2];
 
-                // Beräkna triangelns mittpunkt i lokal rymd
+                // Calculate the triangle's center in local space
                 Vector3 center = (vertices[i0] + vertices[i1] + vertices[i2]) / 3f;
 
-                // Räkna ut vinkeln runt Y-axeln (0 till 360 grader)
+                // Calculate the angle around the Y-axis (0 to 360 degrees)
                 float angle = Mathf.Atan2(center.x, center.z) * Mathf.Rad2Deg;
                 if (angle < 0) angle += 360f;
 
-                // Om triangelns mittpunkt ligger inom den här bitens tårtbit, spara den!
+                // If the triangle's center is within this slice's angle range, save it!
                 if (angle >= startAngle && angle < endAngle)
                 {
                     int[] currentTriangleIndices = new int[3] { i0, i1, i2 };
@@ -95,7 +95,7 @@ public class TorusSplitter : MonoBehaviour
                 }
             }
 
-            // Skapa ett nytt GameObject för den här specifika biten
+            // Create a new GameObject for this specific piece
             if (newTriangles.Count > 0)
             {
                 GameObject bit = new GameObject($"TorusChunk_7_{i + 1}");
@@ -116,15 +116,15 @@ public class TorusSplitter : MonoBehaviour
 
                 mf.sharedMesh = chunkMesh;
 
-                // Skapa en perfekt, konvex fysik-collider baserad på BARA den här bitens form
+                // Create a perfect, convex physics collider based strictly on this piece's shape
                 MeshCollider meshCol = bit.AddComponent<MeshCollider>();
                 meshCol.sharedMesh = chunkMesh;
                 meshCol.convex = true;
             }
         }
 
-        // Dölj originaltorusen
+        // Hide the original torus
         torusObject.SetActive(false);
-        Debug.Log("Torusen har klippts upp i 7 unika tårtbitar! Kom ihåg att tilldela 'TorusBits7_Root' till ditt Target-skript.");
+        Debug.Log("The torus has been split into 7 unique wedge pieces! Remember to assign 'TorusBits7_Root' to your Target script.");
     }
 }

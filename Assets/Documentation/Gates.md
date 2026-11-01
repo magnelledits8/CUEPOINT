@@ -16,7 +16,7 @@ Documents
 
 In Unity
 
-- [ ] Quick greybox test of my biggest risk (Completed: Input System and Camera setups tested)
+- [x] Quick greybox test of my biggest risk (Completed: Input System and Camera setups tested)
 
 Peer review - reviewed by: ________   Go / Not yet: ________ What they said, in one line:
 
@@ -32,9 +32,9 @@ Feedback from Brian (write it down while you talk):
 
 Required
 
-- [ ] The core loop is playable in a greybox (plain shapes, no art, no menus yet)
+- [x] The core loop is playable in a greybox (plain shapes, no art, no menus yet)
 - [x] Must feature, with an hour estimate: Everything synchronized decently and working well (Physics, inputs, shooting alignment). Estimate: 8 hours.
-- [x] Should feature, with an hour estimate: At least 15 targets to get a feel of the rhythm and timing. Estimate: 4 hours.
+- [x] Should feature, with an hour estimate: At least have some targets to get a feel of the connecting bullets. Estimate: 4 hours.
 - [x] Could feature, with an hour estimate: Refined audio tracking & buffer polishes. Estimate: 3 hours.
 
 Quick ones (still needed, rough is fine, a few minutes each)

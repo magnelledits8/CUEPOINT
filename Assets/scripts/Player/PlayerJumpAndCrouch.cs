@@ -3,55 +3,86 @@ using UnityEngine.InputSystem;
 
 public class PlayerJumpAndCrouch : MonoBehaviour
 {
-    [Header("Hopp- & Gravitationsinställningar")]
+    [Header("Jump & Gravity Settings")]
     public float jumpHeight = 3f;
     public float jumpForwardBoost = 2f;
     public float extraGravity = 15f;
 
-    [Header("Hopp-Reaktivitet (Queueing)")]
+    [Header("Jump Responsiveness (Queueing)")]
     public float jumpBufferTime = 0.2f;
     private float jumpBufferTimer = 0f;
 
-    [Header("Slideinställningar")]
-    public float slideSpeed = 12f;
+    [Header("Slide Settings (UPDATED)")]
     public float slideDuration = 0.5f;
 
+    [Header("Smooth Camera Movement (NEW)")]
+    [Tooltip("Drag your Main Camera here")]
+    public Transform mainCameraTransform;
+    [Tooltip("How much the camera should physically drop downward during a slide (in meters)")]
+    public float cameraDropAmount = 1.2f;
+    [Tooltip("How smoothly/fast the camera glides down and up. Higher value = faster, lower value = smoother")]
+    public float slideLerpSpeed = 10f;
+
     private Rigidbody rb;
-    private PlayerRunController laneMove; // UPPDATERAD TILL DITT NYA SKRIPT
+    private CapsuleCollider capsuleCollider;
+    private PlayerRunController laneMove;
     private bool isGrounded;
     private bool isSliding = false;
     private float slideTimer = 0f;
-    private float originalHeightY;
+
+    private float originalColliderHeight;
+    private Vector3 originalColliderCenter;
+    private Vector3 originalCameraLocalPosition;
+    private Vector3 targetCameraLocalPosition; // Keeps track of where the camera SHOULD be heading
 
     void Awake()
     {
         rb = GetComponent<Rigidbody>();
-        laneMove = GetComponent<PlayerRunController>(); // UPPDATERAD TILL DITT NYA SKRIPT
+        capsuleCollider = GetComponent<CapsuleCollider>();
+        laneMove = GetComponent<PlayerRunController>();
 
         if (rb != null)
         {
             rb.freezeRotation = true;
             rb.useGravity = false;
         }
-        originalHeightY = transform.localScale.y;
+
+        if (capsuleCollider != null)
+        {
+            originalColliderHeight = capsuleCollider.height;
+            originalColliderCenter = capsuleCollider.center;
+        }
+
+        if (mainCameraTransform != null)
+        {
+            originalCameraLocalPosition = mainCameraTransform.localPosition;
+            targetCameraLocalPosition = originalCameraLocalPosition; // Start at original position
+        }
     }
 
     void Update()
     {
-        // Tillåt bara hopp och slides om introt är över och koden har börjat köra spelaren framåt!
         if (laneMove == null || !laneMove.hasStartedRunning) return;
 
-        isGrounded = Physics.Raycast(transform.position, Vector3.down, (transform.localScale.y * 1.1f));
+        isGrounded = Physics.Raycast(transform.position, Vector3.down, 1.1f);
 
-        // Hopp-buffert
         if (jumpBufferTimer > 0f) jumpBufferTimer -= Time.deltaTime;
         if (Keyboard.current.spaceKey.wasPressedThisFrame) jumpBufferTimer = jumpBufferTime;
         if (jumpBufferTimer > 0f && isGrounded) NormalJump();
 
-        // Slide-logik
         if (Keyboard.current.leftCtrlKey.wasPressedThisFrame && isGrounded && !isSliding) StartSlide();
 
         if (isSliding) UpdateSlide();
+
+        // SMOOTH MOVEMENT: Glides the camera smoothly toward the target (either down or up) every frame
+        if (mainCameraTransform != null)
+        {
+            mainCameraTransform.localPosition = Vector3.Lerp(
+                mainCameraTransform.localPosition,
+                targetCameraLocalPosition,
+                Time.deltaTime * slideLerpSpeed
+            );
+        }
     }
 
     void FixedUpdate()
@@ -77,31 +108,50 @@ public class PlayerJumpAndCrouch : MonoBehaviour
     {
         isSliding = true;
         slideTimer = slideDuration;
-        float targetHeight = originalHeightY * 0.5f;
-        float heightDifference = (originalHeightY - targetHeight) / 2f;
-        transform.position = new Vector3(transform.position.x, transform.position.y - heightDifference, transform.position.z);
-        transform.localScale = new Vector3(transform.localScale.x, targetHeight, transform.localScale.z);
+
+        // Hitbox shrinks instantly to avoid obstacles immediately upon button press
+        if (capsuleCollider != null)
+        {
+            float targetHeight = originalColliderHeight * 0.5f;
+            float heightDifference = (originalColliderHeight - targetHeight) / 2f;
+
+            capsuleCollider.height = targetHeight;
+            capsuleCollider.center = new Vector3(originalColliderCenter.x, originalColliderCenter.y - heightDifference, originalColliderCenter.z);
+        }
+
+        // Set the camera target to be DOWN
+        targetCameraLocalPosition = new Vector3(
+            originalCameraLocalPosition.x,
+            originalCameraLocalPosition.y - cameraDropAmount,
+            originalCameraLocalPosition.z
+        );
     }
 
     void UpdateSlide()
     {
         slideTimer -= Time.deltaTime;
-        if (laneMove != null) laneMove.targetPositionZ += slideSpeed * Time.deltaTime;
+        // slideSpeed has been removed from here so the player moves entirely via your other script!
 
         if (slideTimer <= 0f)
         {
-            isSliding = false;
-            float targetHeight = originalHeightY;
-            float heightDifference = (targetHeight - transform.localScale.y) / 2f;
-            transform.position = new Vector3(transform.position.x, transform.position.y + heightDifference, transform.position.z);
-            transform.localScale = new Vector3(transform.localScale.x, originalHeightY, transform.localScale.z);
+            ResetSlideAndJump();
         }
     }
 
     public void ResetSlideAndJump()
     {
         isSliding = false;
-        transform.localScale = new Vector3(transform.localScale.x, originalHeightY, transform.localScale.z);
+
+        // Reset hitbox
+        if (capsuleCollider != null)
+        {
+            capsuleCollider.height = originalColliderHeight;
+            capsuleCollider.center = originalColliderCenter;
+        }
+
+        // Set the camera target to go UP again
+        targetCameraLocalPosition = originalCameraLocalPosition;
+
         if (rb != null)
         {
             rb.linearVelocity = Vector3.zero;

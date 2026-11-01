@@ -4,7 +4,7 @@ using UnityEngine.InputSystem;
 public class MouseLook : MonoBehaviour
 {
     [Header("Settings (Aimlabs Raw Input)")]
-    [Tooltip("Justera känsligheten här. Testa ett lågt värde, t.ex. mellan 0.1 och 0.8.")]
+    [Tooltip("Adjust sensitivity here. Try a low value, e.g., between 0.1 and 0.8.")]
     public float sensitivity = 0.4f;
     public Transform playerBody;
 
@@ -13,7 +13,7 @@ public class MouseLook : MonoBehaviour
 
     void Start()
     {
-        // Lås muspekaren till mitten av skärmen och gör den osynlig
+        // Lock the cursor to the center of the screen and make it invisible
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
 
@@ -25,21 +25,21 @@ public class MouseLook : MonoBehaviour
 
     void Update()
     {
-        // Läser av musrörelsen direkt från det nya Input-systemet (FPS-oberoende Raw Input)
+        // Reads mouse delta directly from the new Input System (FPS-independent Raw Input)
         Vector2 mouseDelta = Mouse.current.delta.ReadValue();
 
         float mouseX = mouseDelta.x * sensitivity;
         float mouseY = mouseDelta.y * sensitivity;
 
-        // 1. STENHÅRD VERTIKAL SPÄRR (Aimlabs): Går aldrig över kanten till upp-och-ner
+        // 1. STRICT VERTICAL CLAMP (Aimlabs style): Never flips upside down
         xRotation -= mouseY;
         xRotation = Mathf.Clamp(xRotation, -89f, 89f);
 
-        // 2. Horisontell rotation (Titta höger/vänster)
-        // Läggs direkt på kamerans transform istället för kroppen för att förhindra att spelaren springer snett!
+        // 2. Horizontal rotation (Look left/right)
+        // Applied directly to the camera's transform instead of the body to prevent running sideways!
         yRotation += mouseX;
 
-        // 3. Applicera hela rotationen stabilt direkt på kamerans transform
+        // 3. Apply the full rotation stably directly to the camera's transform
         transform.localRotation = Quaternion.Euler(xRotation, yRotation, 0f);
     }
 }

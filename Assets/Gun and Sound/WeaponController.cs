@@ -8,37 +8,37 @@ public class WeaponController : MonoBehaviour
     public float bobAmountX = 0.02f;
     public float bobAmountY = 0.015f;
 
-    [Header("Skytte / Rekyl")]
-    public float recoilAngle = 15f;      
+    [Header("Shooting / Recoil")]
+    public float recoilAngle = 15f;
     public float recoilSpeed = 20f;
     public float returnSpeed = 8f;
 
-    [Header("Muzzle Flash (Helt Statisk)")]
+    [Header("Muzzle Flash (Fully Static)")]
     public GameObject myMuzzleFlash;
-    public float flashDuration = 0.05f; 
+    public float flashDuration = 0.05f;
 
-    [Header("Dynamisk Ljusglöd (3D Glow)")]
-    public Light muzzleLight;            // Dra in ditt Point Light här
-    public float maxLightIntensity = 5f; // Hur starkt det lyser i början
-    public float lightCoolDownSpeed = 15f; // Hur snabbt glöden svalnar och försvinner
+    [Header("Dynamic Glow (3D Glow)")]
+    public Light muzzleLight;            // Drag your Point Light here
+    public float maxLightIntensity = 5f; // Initial brightness intensity
+    public float lightCoolDownSpeed = 15f; // How fast the glow cools down and disappears
 
-    [Header("Kula / Spårljus (Tracer)")]
-    public GameObject bulletTracerPrefab; // Skapa en liten 3D-kapsel/sfär och dra in här
-    public Transform muzzlePoint;         // Punkten där kulan startar (längst fram på pipan)
-    public float bulletSpeed = 100f;      // Hur snabbt kulan flyger framåt
-    public float bulletLifeTime = 0.2f;   // Hur länge man hinner se kulan innan den tas bort
+    [Header("Bullet / Tracer")]
+    public GameObject bulletTracerPrefab; // Create a small 3D capsule/sphere and drag it here
+    public Transform muzzlePoint;         // The point where the bullet starts (tip of the barrel)
+    public float bulletSpeed = 100f;      // How fast the bullet flies forward
+    public float bulletLifeTime = 0.2f;   // How long the bullet is visible before being destroyed
 
-    [Header("Eldhastighet (Fire Rate)")]
+    [Header("Fire Rate")]
     public float fireRate = 0.5f;
 
-    [Header("Ljud / Audio")]
+    [Header("Audio / Sound")]
     public AudioClip gunFireSound;
     [Range(0f, 1f)] public float volume = 0.8f;
-    [Tooltip("Fördröjning för ljudet i sekunder. Sätt till 0 för direkt uppspelning.")]
-    public float soundDelay = 0f;        
+    [Tooltip("Sound delay in seconds. Set to 0 for instant playback.")]
+    public float soundDelay = 0f;
 
     private AudioSource audioSource;
-    private ParticleSystem flashParticles; 
+    private ParticleSystem flashParticles;
     private Vector3 originalPosition;
     private Quaternion originalRotation;
     private float currentRecoil = 0f;
@@ -72,7 +72,7 @@ public class WeaponController : MonoBehaviour
             myMuzzleFlash.SetActive(false);
         }
 
-        // Tvingar ljuset att vara helt avstängt/släckt när spelet startar
+        // Forces the light to be completely turned off when the game starts
         if (muzzleLight != null)
         {
             muzzleLight.intensity = 0f;
@@ -81,13 +81,13 @@ public class WeaponController : MonoBehaviour
 
     void Update()
     {
-        // 1. SKYTTE (Vänsterklick)
+        // 1. SHOOTING (Left Click)
         if (Mouse.current != null && Mouse.current.leftButton.wasPressedThisFrame && Time.time >= nextTimeToFire)
         {
             nextTimeToFire = Time.time + fireRate;
             currentRecoil = recoilAngle;
 
-            // SPELA UPP LJUD
+            // PLAY SOUND
             if (audioSource != null && gunFireSound != null)
             {
                 if (soundDelay > 0f)
@@ -100,7 +100,7 @@ public class WeaponController : MonoBehaviour
                 }
             }
 
-            // AKTIVERA MUZZLE FLASH
+            // ACTIVATE MUZZLE FLASH
             if (myMuzzleFlash != null)
             {
                 myMuzzleFlash.SetActive(true);
@@ -110,36 +110,36 @@ public class WeaponController : MonoBehaviour
                     flashParticles.Clear();
                     flashParticles.Play();
                 }
-                
+
                 flashTimer = Time.time + flashDuration;
             }
 
-            // TÄND GLÖDEN (Point Light slår till direkt)
+            // TURN ON GLOW (Point Light triggers instantly)
             if (muzzleLight != null)
             {
                 muzzleLight.intensity = maxLightIntensity;
             }
 
-            // SKJUT UT KULAN (Tracer)
+            // SPAWN BULLET (Tracer)
             SpawnBulletTracer();
         }
 
-        // Automatisk avstängning av 2D-flamman
+        // Automatic deactivation of the 2D flash
         if (myMuzzleFlash != null && myMuzzleFlash.activeSelf && Time.time >= flashTimer)
         {
             myMuzzleFlash.SetActive(false);
         }
 
-        // GLÖD SOM SVALNAR: Tonar ner Point Light mjukt till 0 över tid
+        // COOLING GLOW: Smoothly fades out the Point Light to 0 over time
         if (muzzleLight != null && muzzleLight.intensity > 0f)
         {
             muzzleLight.intensity = Mathf.MoveTowards(muzzleLight.intensity, 0f, Time.deltaTime * lightCoolDownSpeed);
         }
 
-        // Återpressa rekylen mjukt
+        // Smoothly return recoil
         currentRecoil = Mathf.Lerp(currentRecoil, 0f, Time.deltaTime * returnSpeed);
 
-        // 2. IDLE GUNG
+        // 2. IDLE BOBBING
         timer += Time.deltaTime * bobSpeed;
         float bobX = Mathf.Sin(timer) * bobAmountX;
         float bobY = Mathf.Sin(timer * 2f) * bobAmountY;
@@ -155,10 +155,10 @@ public class WeaponController : MonoBehaviour
     {
         if (bulletTracerPrefab != null && muzzlePoint != null)
         {
-            // Skapar kulan vid pipan
+            // Spawns the bullet at the muzzle
             GameObject tracer = Instantiate(bulletTracerPrefab, muzzlePoint.position, muzzlePoint.rotation);
-            
-            // Ger kulan fart framåt (i pipans riktning)
+
+            // Gives the bullet forward velocity (in the muzzle's forward direction)
             Rigidbody rb = tracer.GetComponent<Rigidbody>();
             if (rb != null)
             {
@@ -166,12 +166,14 @@ public class WeaponController : MonoBehaviour
             }
             else
             {
-                // Om du inte har en Rigidbody på kulan så flyttar vi den via kod istället
-                Destroy(tracer.AddComponent<Rigidbody>()); // Säkerhetsåtgärd
+                // If there is no Rigidbody on the bullet, we add it safely because ConstantForce requires it
+                rb = tracer.AddComponent<Rigidbody>();
+                rb.useGravity = false; // Prevent the bullet from falling down
+
                 tracer.AddComponent<ConstantForce>().force = muzzlePoint.forward * bulletSpeed * 10f;
             }
 
-            // Förstör kulan automatiskt efter en bråkdel av en sekund så den inte flyger för evigt
+            // Automatically destroy the bullet after a fraction of a second so it doesn't fly forever
             Destroy(tracer, bulletLifeTime);
         }
     }

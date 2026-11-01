@@ -4,13 +4,13 @@ public class PlayerHealth : MonoBehaviour
 {
     public float fallThreshold = -10f;
 
-    // SYNKKORREKTION: Ändrat från PlayerLaneMovement till PlayerRunController!
+    // SYNC CORRECTION: Changed from PlayerLaneMovement to PlayerRunController!
     private PlayerRunController laneMove;
     private PlayerJumpAndCrouch jumpCrouch;
 
     void Awake()
     {
-        // Ändrat till PlayerRunController här med!
+        // Changed to PlayerRunController here as well!
         laneMove = GetComponent<PlayerRunController>();
         jumpCrouch = GetComponent<PlayerJumpAndCrouch>();
     }
@@ -28,7 +28,7 @@ public class PlayerHealth : MonoBehaviour
         if (laneMove != null) laneMove.ResetMovement();
         if (jumpCrouch != null) jumpCrouch.ResetSlideAndJump();
 
-        Debug.Log("Spelaren startade om!");
+        Debug.Log("Player restarted!");
 
         if (laneMove != null)
         {

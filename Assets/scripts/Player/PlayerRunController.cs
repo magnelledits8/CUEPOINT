@@ -3,25 +3,25 @@ using UnityEngine.InputSystem;
 
 public class PlayerRunController : MonoBehaviour
 {
-    [Header("Laneinställningar")]
+    [Header("Lane Settings")]
     public float laneDistance = 3f;
     public float laneChangeSpeed = 10f;
     public int currentLane = 0;
 
-    [Header("Gång- & Springinställningar")]
+    [Header("Walk & Sprint Settings")]
     public float moveSpeed = 35f;
     public float sprintSpeed = 35f;
     public float currentSpeed;
 
-    [Header("Positionsbaserad Intro-trigg (PROFFS)")]
-    [Tooltip("Vid vilken exakt Z-position på banan ska introt ta slut och koden ta över?")]
-    public float triggerGameplayAtZ = 20.16f; // Satt till ditt exakta värde från bilden!
+    [Header("Position-Based Intro Trigger (PRO)")]
+    [Tooltip("At which exact Z-position on the track should the intro end and the script take over?")]
+    public float triggerGameplayAtZ = 20.16f; // Set to your exact value from the image!
 
-    [Header("Mjuk acceleration EFTER introt")]
-    [Tooltip("Vilken fart vill du att koden ska börja på i exakt den frame den tar över?")]
-    public float animationEndSpeed = 22.2f; // Satt till ditt värde från bilden!
-    [Tooltip("Hur många sekunder ska det ta för koden och tempot att nå maxfart (35)?")]
-    public float rampDuration = 0.5f; // Optimerat värde för ett hypersnabbt och rappt flyt!
+    [Header("Smooth Acceleration AFTER Intro")]
+    [Tooltip("What speed do you want the script to start at in the exact frame it takes over?")]
+    public float animationEndSpeed = 22.2f; // Set to your value from the image!
+    [Tooltip("How many seconds should it take for the script and tempo to reach max speed (35)?")]
+    public float rampDuration = 0.5f; // Optimized value for a fast and snappy flow!
 
     private float accelerationTimer = 0f;
     private float targetPositionX;
@@ -49,7 +49,7 @@ public class PlayerRunController : MonoBehaviour
     public void StartIntroSequence()
     {
         ResetMovement();
-        hasStartedRunning = false; // Koden flyttar inte spelaren under introt
+        hasStartedRunning = false; // Code does not move the player during the intro
         isInStartSequence = true;
         isRampingSpeed = false;
         currentSpeed = 0f;
@@ -57,35 +57,35 @@ public class PlayerRunController : MonoBehaviour
         if (animator != null)
         {
             animator.enabled = true;
-            animator.Play("IntroSequence"); // Spelar din intro-animation (steg -> hopp -> landning)
+            animator.Play("IntroSequence"); // Plays your intro animation (step -> jump -> landing)
         }
     }
 
     void Update()
     {
-        // 1. INTRO-FAS: Kollar varje bildruta om din animation har flyttat spelaren till Z: 20.16
+        // 1. INTRO PHASE: Checks every frame if your animation has moved the player to Z: 20.16
         if (isInStartSequence && !hasStartedRunning)
         {
             if (transform.position.z >= triggerGameplayAtZ)
             {
                 SwitchToGameplay();
             }
-            return; // Låt animationen sköta allt tills vi passerat mållinjen
+            return; // Let the animation handle everything until we cross the finish line
         }
 
         if (!hasStartedRunning) return;
 
         float lerpFactor = 1f - Mathf.Exp(-laneChangeSpeed * Time.deltaTime);
 
-        // --- ORDINARIE SPELKONTROLLER (A & D) ---
-        // Aktiveras automatiskt här så fort introt är över!
+        // --- REGULAR GAMEPLAY CONTROLS (A & D) ---
+        // Automatically activated here as soon as the intro is over!
         if (Keyboard.current.aKey.wasPressedThisFrame && currentLane > -1) currentLane--;
         if (Keyboard.current.dKey.wasPressedThisFrame && currentLane < 1) currentLane++;
 
         targetPositionX = spawnPosition.x + (currentLane * laneDistance);
         float maxSpeed = Keyboard.current.leftShiftKey.isPressed ? sprintSpeed : moveSpeed;
 
-        // --- MJUK KOD-ACCELERATION (RAMP UP) ---
+        // --- SMOOTH SPEED ACCELERATION (RAMP UP) ---
         if (isRampingSpeed)
         {
             accelerationTimer += Time.deltaTime;
@@ -96,7 +96,7 @@ public class PlayerRunController : MonoBehaviour
 
             if (progress >= 1f)
             {
-                isRampingSpeed = false; // Rampen klar! Spelaren är nu uppe i 35 i fart
+                isRampingSpeed = false; // Ramp finished! Player is now up to speed (35)
             }
         }
         else
@@ -104,7 +104,7 @@ public class PlayerRunController : MonoBehaviour
             currentSpeed = maxSpeed;
         }
 
-        // Flytta spelaren spikrakt framåt på Z-axeln via kod
+        // Move the player straight forward on the Z-axis via code
         targetPositionZ += currentSpeed * Time.deltaTime;
 
         Vector3 newPos = transform.position;
@@ -119,19 +119,19 @@ public class PlayerRunController : MonoBehaviour
         hasStartedRunning = true;
         isRampingSpeed = true;
 
-        // Lås kodens målbana till exakt den koordinat där din animation stannade
+        // Lock the script's target lane to the exact coordinate where your animation stopped
         targetPositionZ = transform.position.z;
         accelerationTimer = 0f;
         currentSpeed = animationEndSpeed;
 
-        // CLEAN ÖVERGÅNG: Vi stänger av Animatorn helt här. 
-        // Eftersom koden tar över i exakt samma koordinat och fortsätter framåt, blir det helt sömlöst!
+        // CLEAN TRANSITION: We disable the Animator completely here.
+        // Since the code takes over at the exact same coordinate and continues forward, it becomes seamless!
         if (animator != null)
         {
             animator.enabled = false;
         }
 
-        Debug.Log("Z-Position nådd! Skripten tar över kontrollen vid Z: " + targetPositionZ);
+        Debug.Log("Z-Position reached! Script taking over control at Z: " + targetPositionZ);
     }
 
     public void ResetMovement()

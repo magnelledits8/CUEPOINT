@@ -3,11 +3,11 @@ using UnityEngine.InputSystem;
 
 public class PlayerShooting : MonoBehaviour
 {
-    [Header("Skjutinställningar (Osynlig logik)")]
+    [Header("Shooting Settings (Invisible Logic)")]
     public float range = 100f;
     public Camera fpsCam;
 
-    [Header("Sikte (Crosshair) Inställningar")]
+    [Header("Crosshair Settings")]
     public bool showCrosshair = true;
     public Color crosshairColor = Color.green;
     public int crosshairSize = 10;
@@ -15,13 +15,13 @@ public class PlayerShooting : MonoBehaviour
 
     void Update()
     {
-        // Rita en röd linje i Scene-vyn för att hjälpa dig se din osynliga raycast
+        // Draws a red line in the Scene view to help you see your invisible raycast
         if (fpsCam != null)
         {
             Debug.DrawRay(fpsCam.transform.position, fpsCam.transform.forward * range, Color.red);
         }
 
-        // Registrera skott exakt när man klickar (Vapnets egna skript sköter eldhastigheten separat)
+        // Register shot exactly when clicking (The weapon's own script handles the fire rate separately)
         if (Mouse.current != null && Mouse.current.leftButton.wasPressedThisFrame)
         {
             ShootRaycast();
@@ -32,18 +32,18 @@ public class PlayerShooting : MonoBehaviour
     {
         if (fpsCam == null)
         {
-            Debug.LogError("Du måste dra in din kamera i fältet 'Fps Cam' på PlayerShooting-skriptet!");
+            Debug.LogError("You must assign your camera to the 'Fps Cam' field on the PlayerShooting script!");
             return;
         }
 
         RaycastHit hit;
 
-        // Skjut den helt osynliga laserstrålen rakt fram ur kameran
+        // Fire the completely invisible laser beam straight ahead from the camera
         if (Physics.Raycast(fpsCam.transform.position, fpsCam.transform.forward, out hit, range))
         {
-            Debug.Log("Osynlig träff i 3D-rymden: " + hit.transform.name);
+            Debug.Log("Invisible hit in 3D space: " + hit.transform.name);
 
-            // Sök efter ditt mål-skript på objektet du träffade
+            // Search for your target script on the object you hit
             SpiralTarget3DController target = hit.transform.GetComponent<SpiralTarget3DController>();
 
             if (target != null)
@@ -52,11 +52,11 @@ public class PlayerShooting : MonoBehaviour
 
                 if (hitSuccess)
                 {
-                    Debug.Log("Snyggt träffat! Målet exploderar.");
+                    Debug.Log("Nice shot! The target explodes.");
                 }
                 else
                 {
-                    Debug.Log("Du träffade målet, men det är inte redo ännu.");
+                    Debug.Log("You hit the target, but it's not ready yet.");
                 }
             }
         }
@@ -70,7 +70,7 @@ public class PlayerShooting : MonoBehaviour
         Texture2D texture = Texture2D.whiteTexture;
         GUI.color = crosshairColor;
 
-        // Rita ut det gröna 2D-siktet mitt på skärmen
+        // Draw the green 2D crosshair in the center of the screen
         GUI.DrawTexture(new Rect(screenCenter.x - crosshairSize, screenCenter.y - (crosshairThickness / 2f), crosshairSize * 2, crosshairThickness), texture);
         GUI.DrawTexture(new Rect(screenCenter.x - (crosshairThickness / 2f), screenCenter.y - crosshairSize, crosshairThickness, crosshairSize * 2), texture);
     }
