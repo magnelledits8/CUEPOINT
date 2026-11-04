@@ -27,29 +27,30 @@ public class DelayedMusicStart : MonoBehaviour
         }
         else
         {
-            musicAudio.Play();
+            // If testing without a start sequence, schedule 0.5 seconds ahead for perfect sync
+            double startDsp = AudioSettings.dspTime + 0.5;
+            musicAudio.PlayScheduled(startDsp);
+
+            TargetCueManager manager = Object.FindFirstObjectByType<TargetCueManager>();
+            if (manager != null) manager.BeginTimeline(startDsp);
         }
     }
 
     IEnumerator WaitAndPlay(MatchStartSequence seq)
     {
-        // Wait for loading duration
         yield return new WaitForSeconds(seq.loadWaitDuration);
 
-        // Wait for any countdown delay animation
         if (seq.countdownDelay > 0f)
         {
             yield return new WaitForSeconds(seq.countdownDelay);
         }
 
-        // Calculate the total duration of the animation dynamically based on real seconds
         float animDuration = 0f;
         if (seq.countdownFrames != null && seq.framesPerSecond > 0f)
         {
             animDuration = seq.countdownFrames.Length / seq.framesPerSecond;
         }
 
-        // Ensure playback time matches perfectly in real-time independent of frames
         float finalWaitTime = animDuration - overlapSeconds;
 
         if (finalWaitTime > 0f)
@@ -59,7 +60,16 @@ public class DelayedMusicStart : MonoBehaviour
 
         if (musicAudio != null && !musicAudio.isPlaying)
         {
-            musicAudio.Play();
+            // Schedule the start 0.1 seconds into the future to give Unity time to buffer the audio stream
+            double scheduledStartTime = AudioSettings.dspTime + 0.1;
+            musicAudio.PlayScheduled(scheduledStartTime);
+
+            // Send the exact audio start time timestamp to the TargetCueManager
+            TargetCueManager manager = Object.FindFirstObjectByType<TargetCueManager>();
+            if (manager != null)
+            {
+                manager.BeginTimeline(scheduledStartTime);
+            }
         }
     }
 }
