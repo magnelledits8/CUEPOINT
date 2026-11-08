@@ -1,29 +1,29 @@
+
 using UnityEngine;
 
 /// <summary>
-/// A lightweight cue marker in the level timeline. The actual target prefab is only
-/// instantiated when the player is close enough and the cue is near its music time.
+/// Places and schedules a target in the level.
+/// The target is instantiated shortly before its music time.
 /// </summary>
 public class TargetCue : MonoBehaviour
 {
     [Header("Target Prefab & Placement")]
     [SerializeField] private SpiralTarget3DController targetPrefab;
-    [Tooltip("Where the target begins its flight. The rotation of this object determines the starting angle.")]
+
+    [Tooltip("Where the target starts moving.")]
     [SerializeField] private Transform spawnPoint;
-    [Tooltip("Where the target stops and becomes ready. The rotation of this object determines the final angle.")]
+
+    [Tooltip("Where the target stops and becomes ready.")]
     [SerializeField] private Transform hitPoint;
 
     [Header("Music Time (Seconds from song start)")]
-    [Tooltip("The exact song time in seconds when the target should be stationary on the Hit Point and ready to be shot.")]
     [SerializeField, Min(0f)] private float readyTimeSeconds = 8.5f;
     [SerializeField, Min(0f)] private float movementDuration = 0.5f;
     [SerializeField, Min(0f)] private float chargeDuration = 0.9f;
     [SerializeField, Min(0f)] private float fadeInDuration = 0.3f;
 
     [Header("Just-In-Time Activation")]
-    [Tooltip("The target prefab is not instantiated until the player camera is within this distance from the hitPoint.")]
     [SerializeField, Min(0.1f)] private float activationDistance = 35f;
-    [Tooltip("How many seconds before the movement starts that the prefab is allowed to instantiate and pre-warm.")]
     [SerializeField, Min(0f)] private float prewarmSeconds = 0.5f;
 
     private Transform playerCamera;
@@ -31,51 +31,82 @@ public class TargetCue : MonoBehaviour
     private bool timelineConfigured;
     private bool processed;
 
-    public void Configure(Transform cameraTransform, double songStartDspTime)
+    public void Configure(
+        Transform cameraTransform,
+        double songStartDspTime)
     {
         playerCamera = cameraTransform;
         musicStartDspTime = songStartDspTime;
+
         timelineConfigured = true;
         processed = false;
     }
 
-    /// <summary>Called automatically by TargetCueManager every frame.</summary>
+    // Called by TargetCueManager every frame.
     public void Tick(double currentDspTime)
     {
         if (!timelineConfigured || processed)
             return;
 
-        if (targetPrefab == null || spawnPoint == null || hitPoint == null || playerCamera == null)
-            return;
-
-        double readyDspTime = musicStartDspTime + readyTimeSeconds;
-        double movementStartDspTime = readyDspTime - movementDuration - chargeDuration;
-
-        // If the player missed the window to activate the target in time, skip it
-        if (currentDspTime >= readyDspTime)
+        if (targetPrefab == null ||
+            spawnPoint == null ||
+            hitPoint == null ||
+            playerCamera == null)
         {
-            processed = true;
-            Debug.LogWarning(name + ": Target was not activated in time. Increase Activation Distance or check its music time.", this);
             return;
         }
 
-        // Wait until it is time to pre-warm the prefab
-        if (currentDspTime < movementStartDspTime - prewarmSeconds)
-            return;
+        double readyDspTime =
+            musicStartDspTime + readyTimeSeconds;
 
-        // Check the current distance to the player camera
-        float distance = Vector3.Distance(playerCamera.position, hitPoint.position);
+        double movementStartDspTime =
+            readyDspTime - movementDuration - chargeDuration;
+
+        // Do not create targets that are already too late.
+        if (currentDspTime >= readyDspTime)
+        {
+            processed = true;
+
+            Debug.LogWarning(
+                name + ": Target was not activated in time. " +
+                "Increase Activation Distance or check its music time.",
+                this
+            );
+
+            return;
+        }
+
+        // Wait until the target is close to its start time.
+        if (currentDspTime <
+            movementStartDspTime - prewarmSeconds)
+        {
+            return;
+        }
+
+        // Check the player's distance from the target.
+        float distance = Vector3.Distance(
+            playerCamera.position,
+            hitPoint.position
+        );
+
         if (distance > activationDistance)
             return;
 
-        // Instantiate the target using the exact starting position and rotation of the spawnPoint
+        // Create the target prefab.
         SpiralTarget3DController target = Instantiate(
             targetPrefab,
             spawnPoint.position,
             spawnPoint.rotation
         );
 
-        // Begin the sequence perfectly synchronized with the audio DSP clock
+        // FIX: An inactive prefab creates an inactive clone.
+        // Activate the clone before starting its coroutine.
+        if (!target.gameObject.activeSelf)
+        {
+            target.gameObject.SetActive(true);
+        }
+
+        // Start movement and animation on the music timeline.
         target.BeginScheduledSequence(
             spawnPoint.position,
             spawnPoint.rotation,
@@ -97,15 +128,26 @@ public class TargetCue : MonoBehaviour
 
         Gizmos.color = Color.cyan;
         Gizmos.DrawSphere(spawnPoint.position, 0.12f);
+
         Gizmos.color = Color.green;
         Gizmos.DrawSphere(hitPoint.position, 0.12f);
-        Gizmos.color = Color.yellow;
-        Gizmos.DrawLine(spawnPoint.position, hitPoint.position);
 
-        // Draws small arrows in the Scene view to visualize the rotation alignment
+        Gizmos.color = Color.yellow;
+        Gizmos.DrawLine(
+            spawnPoint.position,
+            hitPoint.position
+        );
+
         Gizmos.color = Color.cyan;
-        Gizmos.DrawRay(spawnPoint.position, spawnPoint.forward * 0.5f);
+        Gizmos.DrawRay(
+            spawnPoint.position,
+            spawnPoint.forward * 0.5f
+        );
+
         Gizmos.color = Color.green;
-        Gizmos.DrawRay(hitPoint.position, hitPoint.forward * 0.5f);
+        Gizmos.DrawRay(
+            hitPoint.position,
+            hitPoint.forward * 0.5f
+        );
     }
 }

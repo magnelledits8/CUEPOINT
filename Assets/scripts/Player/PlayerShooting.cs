@@ -1,3 +1,4 @@
+
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -36,6 +37,9 @@ public class PlayerShooting : MonoBehaviour
             return;
         }
 
+        // Tracks whether this shot successfully hit a ready target
+        bool successfulShot = false;
+
         RaycastHit hit;
 
         // Fire the completely invisible laser beam straight ahead from the camera
@@ -43,14 +47,14 @@ public class PlayerShooting : MonoBehaviour
         {
             Debug.Log("Invisible hit in 3D space: " + hit.transform.name);
 
-            // Search for your target script on the object you hit
-            SpiralTarget3DController target = hit.transform.GetComponent<SpiralTarget3DController>();
+            // Search for the target script on the hit object or its parent
+            SpiralTarget3DController target = hit.transform.GetComponentInParent<SpiralTarget3DController>();
 
             if (target != null)
             {
-                bool hitSuccess = target.TryShoot();
+                successfulShot = target.TryShoot();
 
-                if (hitSuccess)
+                if (successfulShot)
                 {
                     Debug.Log("Nice shot! The target explodes.");
                 }
@@ -58,6 +62,23 @@ public class PlayerShooting : MonoBehaviour
                 {
                     Debug.Log("You hit the target, but it's not ready yet.");
                 }
+            }
+            else
+            {
+                Debug.Log("Miss! You hit something that isn't a target.");
+            }
+        }
+        else
+        {
+            Debug.Log("Miss! You didn't hit anything.");
+        }
+
+        // NEW: Reset combo if the shot was not successful
+        if (!successfulShot)
+        {
+            if (ScoreHUD.Instance != null)
+            {
+                ScoreHUD.Instance.RegisterMiss();
             }
         }
     }

@@ -1,5 +1,6 @@
 
 using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 
 public class SpiralTarget3DController : MonoBehaviour
@@ -20,15 +21,33 @@ public class SpiralTarget3DController : MonoBehaviour
 
     [Header("Animation timing")]
     [SerializeField, Min(0.05f)] private float chargeDuration = 0.9f;
-    [SerializeField, Min(1f)] private float hitFramesPerSecond = 24f;
+    [SerializeField, Min(0.02f)] private float hitAnimationDuration = 0.15f;
+    [SerializeField] private bool hideCoreAfterHit = true;
     [SerializeField, Min(0f)] private float readyHoldSeconds = 0f;
     [SerializeField, Min(0.01f)] private float missFadeDuration = 0.15f;
 
     [Header("3D outer ring")]
     [SerializeField] private Transform ringSegmentsRoot;
     [SerializeField] private GameObject wholeRingVisual;
-    [SerializeField, Min(0.1f)] private float fragmentExplosionForce = 3.5f;
-    [SerializeField, Min(0.1f)] private float fragmentUpwardForce = 0.5f;
+
+    [Header("Fragment Explosion Settings")]
+    [SerializeField, Min(0f)] private float fragmentExplosionForce = 4f;
+
+    [Tooltip("Extra upward force. Use 0 to avoid pushing everything upward.")]
+    [SerializeField, Min(0f)] private float fragmentUpwardForce = 0f;
+
+    [Tooltip("How much the pieces rotate.")]
+    [SerializeField, Min(0f)] private float fragmentSpinForce = 1.5f;
+
+    [Tooltip("0 = mostly straight outward. 1 = very random directions.")]
+    [SerializeField, Range(0f, 1f)] private float fragmentDirectionVariation = 0.85f;
+
+    [Tooltip("Random difference in force between fragments.")]
+    [SerializeField, Range(0f, 1f)] private float fragmentSpeedVariation = 0.3f;
+
+    [Tooltip("Small random movement out of the ring's plane.")]
+    [SerializeField, Range(0f, 1f)] private float fragmentDepthVariation = 0.2f;
+
     [SerializeField, Min(0.1f)] private float fragmentLifetime = 2f;
     [SerializeField] private bool fragmentsUseGravity = false;
 
@@ -61,13 +80,10 @@ public class SpiralTarget3DController : MonoBehaviour
 
     private void Start()
     {
-        // Do not restart a sequence already scheduled by TargetCue.
         if (beginOnStart && !startedFromCue)
             BeginSequence();
     }
 
-    // TARGET CUE MODE
-    // This is called by TargetCue with music timing and positions.
     public void BeginScheduledSequence(
         Vector3 startPos,
         Quaternion startRot,
@@ -93,12 +109,12 @@ public class SpiralTarget3DController : MonoBehaviour
             );
         }
 
-        // fadeTime is reserved for the whole-target fade effect.
-        // Movement and charge timing are handled below.
         sequenceRoutine = StartCoroutine(
             ScheduledSequenceRoutine(
-                startPos, startRot,
-                endPos, endRot,
+                startPos,
+                startRot,
+                endPos,
+                endRot,
                 moveStartTime,
                 Mathf.Max(0f, moveTime),
                 Mathf.Max(0f, chargeTime)
@@ -119,7 +135,6 @@ public class SpiralTarget3DController : MonoBehaviour
         SetFrame(IncomingIndex);
         SetHitColliderEnabled(true);
 
-        // Wait for the planned music time.
         while (AudioSettings.dspTime < moveStartTime)
             yield return null;
 
@@ -131,7 +146,6 @@ public class SpiralTarget3DController : MonoBehaviour
 
             if (elapsed < moveTime && moveTime > 0f)
             {
-                // MOVEMENT: Spawn Point -> Hit Point.
                 state = TargetState.Incoming;
 
                 float progress = Mathf.Clamp01(
@@ -152,7 +166,6 @@ public class SpiralTarget3DController : MonoBehaviour
             }
             else
             {
-                // CHARGING: Target has reached Hit Point.
                 transform.SetPositionAndRotation(endPos, endRot);
                 state = TargetState.Charging;
 
@@ -160,7 +173,9 @@ public class SpiralTarget3DController : MonoBehaviour
 
                 float progress = chargeTime <= 0f
                     ? 1f
-                    : Mathf.Clamp01((float)(chargeElapsed / chargeTime));
+                    : Mathf.Clamp01(
+                        (float)(chargeElapsed / chargeTime)
+                    );
 
                 float eased = Mathf.Pow(progress, 1.35f);
 
@@ -176,7 +191,6 @@ public class SpiralTarget3DController : MonoBehaviour
             yield return null;
         }
 
-        // READY: Final position, final rotation and Frame 13.
         transform.SetPositionAndRotation(endPos, endRot);
         SetFrame(ReadyIndex);
         state = TargetState.Ready;
@@ -200,8 +214,6 @@ public class SpiralTarget3DController : MonoBehaviour
         }
     }
 
-    // MANUAL MODE
-    // Kept for targets placed directly in the scene.
     public void BeginSequence()
     {
         if (sequenceRoutine != null)
@@ -292,23 +304,58 @@ public class SpiralTarget3DController : MonoBehaviour
         if (sequenceRoutine != null)
             StopCoroutine(sequenceRoutine);
 
+        SetFrame(FirstHitIndex);
+
         ExplodeOuterRing();
+
         sequenceRoutine = StartCoroutine(HitAnimationRoutine());
+
+        if (ScoreHUD.Instance != null)
+        {
+            ScoreHUD.Instance.RegisterHit();
+        }
 
         return true;
     }
 
     private IEnumerator HitAnimationRoutine()
     {
-        float delay = 1f / Mathf.Max(1f, hitFramesPerSecond);
         int lastIndex = frames == null
             ? 0
             : Mathf.Min(frames.Length, 26);
 
-        for (int i = FirstHitIndex; i < lastIndex; i++)
+        int totalHitFrames = lastIndex - FirstHitIndex;
+
+        if (totalHitFrames <= 0)
         {
-            SetFrame(i);
-            yield return new WaitForSeconds(delay);
+            state = TargetState.Finished;
+            yield break;
+        }
+
+        float duration = Mathf.Max(0.02f, hitAnimationDuration);
+        float startTime = Time.time;
+
+        while (Time.time - startTime < duration)
+        {
+            float elapsed = Time.time - startTime;
+            float progress = Mathf.Clamp01(elapsed / duration);
+
+            int frameOffset = Mathf.Clamp(
+                Mathf.FloorToInt(progress * totalHitFrames),
+                0,
+                totalHitFrames - 1
+            );
+
+            SetFrame(FirstHitIndex + frameOffset);
+            yield return null;
+        }
+
+        SetFrame(lastIndex - 1);
+        yield return null;
+
+        if (hideCoreAfterHit && coreRenderer != null)
+        {
+            coreRenderer.enabled = false;
         }
 
         state = TargetState.Finished;
@@ -316,68 +363,174 @@ public class SpiralTarget3DController : MonoBehaviour
 
     private void ExplodeOuterRing()
     {
-        if (wholeRingVisual != null)
+        // Keep the 2D core outside the ring object.
+        if (wholeRingVisual != null && coreRenderer != null)
         {
-            if (coreRenderer != null &&
+            if (coreRenderer.transform != transform &&
                 coreRenderer.transform.IsChildOf(
                     wholeRingVisual.transform))
             {
                 coreRenderer.transform.SetParent(transform, true);
             }
-
-            wholeRingVisual.SetActive(false);
         }
 
-        if (ringSegmentsRoot == null)
-            return;
-
-        for (int i = ringSegmentsRoot.childCount - 1; i >= 0; i--)
+        if (ringSegmentsRoot != null)
         {
-            Transform segment = ringSegmentsRoot.GetChild(i);
+            Vector3 ringCenter = ringSegmentsRoot.position;
+            Vector3 ringNormal = ringSegmentsRoot.up.normalized;
 
-            if (coreRenderer != null &&
-                segment == coreRenderer.transform)
-                continue;
+            int segmentCount = ringSegmentsRoot.childCount;
 
-            segment.SetParent(null, true);
+            List<Collider> fragmentColliders = new List<Collider>();
 
-            Collider segmentCollider = segment.GetComponent<Collider>();
+            for (int i = segmentCount - 1; i >= 0; i--)
+            {
+                Transform segment = ringSegmentsRoot.GetChild(i);
 
-            if (segmentCollider == null)
-                segmentCollider = segment.gameObject.AddComponent<BoxCollider>();
+                if (coreRenderer != null &&
+                    segment == coreRenderer.transform)
+                {
+                    continue;
+                }
 
-            MeshCollider meshCollider = segmentCollider as MeshCollider;
+                // Find the actual center of this ring piece.
+                Vector3 meshCenter = segment.position;
 
-            if (meshCollider != null)
-                meshCollider.convex = true;
+                MeshFilter meshFilter = segment.GetComponent<MeshFilter>();
 
-            Rigidbody body = segment.GetComponent<Rigidbody>();
+                if (meshFilter != null &&
+                    meshFilter.sharedMesh != null)
+                {
+                    meshCenter = segment.TransformPoint(
+                        meshFilter.sharedMesh.bounds.center
+                    );
+                }
 
-            if (body == null)
-                body = segment.gameObject.AddComponent<Rigidbody>();
+                // Start with the piece's natural outward direction.
+                Vector3 outward = Vector3.ProjectOnPlane(
+                    meshCenter - ringCenter,
+                    ringNormal
+                );
 
-            body.useGravity = fragmentsUseGravity;
-            body.mass = 0.2f;
+                if (outward.sqrMagnitude < 0.0001f)
+                {
+                    float angle = 360f * i / Mathf.Max(1, segmentCount);
 
-            Vector3 direction =
-                (segment.position - transform.position).normalized;
+                    outward = Quaternion.AngleAxis(
+                        angle, ringNormal
+                    ) * ringSegmentsRoot.right;
+                }
 
-            if (direction.sqrMagnitude < 0.01f)
-                direction = Random.onUnitSphere;
+                outward.Normalize();
 
-            direction += Vector3.up * fragmentUpwardForce;
+                // RANDOMNESS:
+                // Rotate each piece's outward direction by a random angle.
+                // Higher variation makes the explosion less predictable.
+                float randomAngle = Random.Range(
+                    -135f * fragmentDirectionVariation,
+                     135f * fragmentDirectionVariation
+                );
 
-            body.AddForce(
-                direction.normalized * fragmentExplosionForce,
-                ForceMode.Impulse
-            );
+                Vector3 direction = Quaternion.AngleAxis(
+                    randomAngle,
+                    ringNormal
+                ) * outward;
 
-            body.AddTorque(
-                Random.insideUnitSphere * fragmentExplosionForce,
-                ForceMode.Impulse
-            );
+                // Add small random movement into or out of the ring plane.
+                direction += ringNormal * Random.Range(
+                    -fragmentDepthVariation,
+                    fragmentDepthVariation
+                );
 
-            Destroy(segment.gameObject, fragmentLifetime);
+                // Optional upward boost.
+                direction += Vector3.up * fragmentUpwardForce;
+
+                direction.Normalize();
+
+                // Each fragment gets a different strength.
+                float randomStrength = Random.Range(
+                    Mathf.Max(0.1f, 1f - fragmentSpeedVariation),
+                    1f + fragmentSpeedVariation
+                );
+
+                segment.SetParent(null, true);
+                segment.gameObject.SetActive(true);
+
+                Collider segmentCollider =
+                    segment.GetComponent<Collider>();
+
+                if (segmentCollider == null)
+                {
+                    segmentCollider =
+                        segment.gameObject.AddComponent<BoxCollider>();
+                }
+
+                MeshCollider meshCollider =
+                    segmentCollider as MeshCollider;
+
+                if (meshCollider != null)
+                    meshCollider.convex = true;
+
+                // Prevent ring pieces from colliding with each other.
+                foreach (Collider otherCollider in fragmentColliders)
+                {
+                    if (otherCollider != null)
+                    {
+                        Physics.IgnoreCollision(
+                            segmentCollider,
+                            otherCollider
+                        );
+                    }
+                }
+
+                fragmentColliders.Add(segmentCollider);
+
+                Rigidbody body = segment.GetComponent<Rigidbody>();
+
+                if (body == null)
+                    body = segment.gameObject.AddComponent<Rigidbody>();
+
+                body.isKinematic = false;
+                body.useGravity = fragmentsUseGravity;
+                body.mass = 0.2f;
+
+                body.linearVelocity = Vector3.zero;
+                body.angularVelocity = Vector3.zero;
+
+                // Use the original impulse-based physics feel.
+                body.AddForce(
+                    direction * fragmentExplosionForce * randomStrength,
+                    ForceMode.Impulse
+                );
+
+                // Random rotation for each piece.
+                body.AddTorque(
+                    Random.insideUnitSphere * fragmentSpinForce,
+                    ForceMode.Impulse
+                );
+
+                Destroy(segment.gameObject, fragmentLifetime);
+            }
+        }
+
+        // Hide the original ring without disabling the target.
+        if (wholeRingVisual != null)
+        {
+            MeshRenderer[] ringRenderers =
+                wholeRingVisual.GetComponentsInChildren<MeshRenderer>(true);
+
+            foreach (MeshRenderer ringRenderer in ringRenderers)
+            {
+                ringRenderer.enabled = false;
+            }
+
+            Collider[] ringColliders =
+                wholeRingVisual.GetComponentsInChildren<Collider>(true);
+
+            foreach (Collider ringCollider in ringColliders)
+            {
+                ringCollider.enabled = false;
+            }
         }
     }
 

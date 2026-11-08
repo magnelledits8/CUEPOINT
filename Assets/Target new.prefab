@@ -68,7 +68,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4a761c8f0d2463a4bbab0955f9527c3a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SpiralTarget3DController
-  coreRenderer: {fileID: 0}
+  coreRenderer: {fileID: 8760841029788129862}
   frames:
   - {fileID: 21300000, guid: 9b23b6dfe6da9fe49819a2bfd38442e7, type: 3}
   - {fileID: 21300000, guid: 2158def566691bd43aa27cd3bf2d0483, type: 3}
@@ -99,14 +99,19 @@ MonoBehaviour:
   destination: {fileID: 0}
   moveDuration: 0
   beginOnStart: 0
-  chargeDuration: 2.99
-  hitFramesPerSecond: 24
+  chargeDuration: 2.74
+  hitAnimationDuration: 0.09
+  hideCoreAfterHit: 0
   readyHoldSeconds: 0
   missFadeDuration: 0.15
   ringSegmentsRoot: {fileID: 4843454365584506470}
   wholeRingVisual: {fileID: 4386396931463266428}
-  fragmentExplosionForce: 3.5
-  fragmentUpwardForce: 0.59
+  fragmentExplosionForce: 3.92
+  fragmentUpwardForce: 0.5
+  fragmentSpinForce: 0.34
+  fragmentDirectionVariation: 0.635
+  fragmentSpeedVariation: 0.3
+  fragmentDepthVariation: 0.2
   fragmentLifetime: 1.12
   fragmentsUseGravity: 0
   targetHitCollider: {fileID: 0}
