@@ -63,6 +63,7 @@
     <Compile Include="Assets\SmartPoint\Core\Scripts\CollisionEvent.cs" />
     <Compile Include="Assets\TextMesh Pro\Examples &amp; Extras\Scripts\Benchmark02.cs" />
     <Compile Include="Assets\SmartPoint\Core\Scripts\CheckpointTrigger.cs" />
+    <Compile Include="Assets\scripts\Player\SyncTestMonitor.cs" />
     <Compile Include="Assets\scripts\Targets\SpiralTarget3DController.cs" />
     <Compile Include="Assets\Starter Assets\Runtime\InputSystem\StarterAssetsInputs.cs" />
     <Compile Include="Assets\scripts\StartSequence\MatchStartSequence.cs" />
@@ -114,6 +115,7 @@
     <Compile Include="Assets\StylizedCore\StylizedWoodMonsters\URP\AnimationGallery\Scripts\Core\AnimationSet.cs" />
     <Compile Include="Assets\NewMonoBehaviourScript.cs" />
     <Compile Include="Assets\TextMesh Pro\Examples &amp; Extras\Scripts\TMP_DigitValidator.cs" />
+    <Compile Include="Assets\scripts\HUD\TimingHUDController.cs" />
     <Compile Include="Assets\TextMesh Pro\Examples &amp; Extras\Scripts\TMP_FrameRateCounter.cs" />
     <Compile Include="Assets\scripts\HUD\ScoreHUD.cs" />
     <Compile Include="Assets\TutorialInfo\Scripts\Readme.cs" />
@@ -142,6 +144,7 @@
     <Compile Include="Assets\SmartPoint\Core\Scripts\CheckPoint.cs" />
     <Compile Include="Assets\TextMesh Pro\Examples &amp; Extras\Scripts\TeleType.cs" />
     <Compile Include="Assets\TextMesh Pro\Examples &amp; Extras\Scripts\TMP_TextEventCheck.cs" />
+    <Compile Include="Assets\scripts\CuepointTimingHUDVisual.cs" />
     <Compile Include="Assets\scripts\Player\PlayerRunController.cs" />
     <Compile Include="Assets\Prefabs\SlopeForceTrigger.cs" />
     <Compile Include="Assets\scripts\StartSequence\DelayedMusicStart.cs" />

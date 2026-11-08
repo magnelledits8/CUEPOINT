@@ -1,3 +1,4 @@
+
 using System.Collections;
 using UnityEngine;
 
@@ -5,71 +6,153 @@ using UnityEngine;
 public class DelayedMusicStart : MonoBehaviour
 {
     [Header("Overlap Settings")]
-    [Tooltip("How many seconds BEFORE the countdown is fully completed should the song early start?")]
+    [Tooltip("How many seconds before the complete countdown duration music should start.")]
     public float overlapSeconds = 0.7f;
 
     private AudioSource musicAudio;
+    private bool musicScheduled;
 
-    void Awake()
+    // Allows MatchStartSequence to prepare the music.
+    public AudioSource MusicSource
     {
-        musicAudio = GetComponent<AudioSource>();
-        musicAudio.playOnAwake = false;
-        musicAudio.Stop();
+        get { return musicAudio; }
     }
 
-    void Start()
+    private void Awake()
     {
-        MatchStartSequence sequence = Object.FindFirstObjectByType<MatchStartSequence>();
+        musicAudio = GetComponent<AudioSource>();
+
+        musicAudio.playOnAwake = false;
+        musicAudio.Stop();
+
+        musicScheduled = false;
+    }
+
+    private void Start()
+    {
+        MatchStartSequence sequence =
+            Object.FindFirstObjectByType<MatchStartSequence>();
 
         if (sequence != null)
         {
-            StartCoroutine(WaitAndPlay(sequence));
+            StartCoroutine(WaitForCountdown(sequence));
         }
         else
         {
-            // If testing without a start sequence, schedule 0.5 seconds ahead for perfect sync
-            double startDsp = AudioSettings.dspTime + 0.5;
-            musicAudio.PlayScheduled(startDsp);
-
-            TargetCueManager manager = Object.FindFirstObjectByType<TargetCueManager>();
-            if (manager != null) manager.BeginTimeline(startDsp);
+            StartCoroutine(StartWithoutCountdown());
         }
     }
 
-    IEnumerator WaitAndPlay(MatchStartSequence seq)
+    private IEnumerator WaitForCountdown(MatchStartSequence sequence)
     {
-        yield return new WaitForSeconds(seq.loadWaitDuration);
-
-        if (seq.countdownDelay > 0f)
+        // Wait until the countdown and audio are prepared.
+        while (sequence != null && !sequence.IsCountdownScheduled)
         {
-            yield return new WaitForSeconds(seq.countdownDelay);
+            yield return null;
         }
 
-        float animDuration = 0f;
-        if (seq.countdownFrames != null && seq.framesPerSecond > 0f)
+        if (sequence == null)
+            yield break;
+
+        if (musicAudio == null || musicAudio.clip == null)
         {
-            animDuration = seq.countdownFrames.Length / seq.framesPerSecond;
+            Debug.LogError(
+                "DelayedMusicStart: No gameplay AudioClip assigned."
+            );
+            yield break;
         }
 
-        float finalWaitTime = animDuration - overlapSeconds;
+        // Full countdown duration, including skipped frames.
+        double fullDuration =
+            sequence.countdownFrames.Length /
+            (double)Mathf.Max(1f, sequence.framesPerSecond);
 
-        if (finalWaitTime > 0f)
+        // Preserve the previous music-start relationship.
+        // The original script added a 0.1 second scheduling offset.
+        double musicDelay =
+            fullDuration - overlapSeconds + 0.1;
+
+        // Prevent scheduling in the past or too close to now.
+        double startDsp =
+            sequence.CountdownDspStartTime +
+            musicDelay;
+
+        if (startDsp < AudioSettings.dspTime + 0.2)
         {
-            yield return new WaitForSeconds(finalWaitTime);
+            Debug.LogWarning(
+                "DelayedMusicStart: Music start was too close. " +
+                "Scheduling slightly later."
+            );
+
+            startDsp = AudioSettings.dspTime + 0.2;
         }
 
-        if (musicAudio != null && !musicAudio.isPlaying)
-        {
-            // Schedule the start 0.1 seconds into the future to give Unity time to buffer the audio stream
-            double scheduledStartTime = AudioSettings.dspTime + 0.1;
-            musicAudio.PlayScheduled(scheduledStartTime);
+        ScheduleMusic(startDsp);
+    }
 
-            // Send the exact audio start time timestamp to the TargetCueManager
-            TargetCueManager manager = Object.FindFirstObjectByType<TargetCueManager>();
-            if (manager != null)
-            {
-                manager.BeginTimeline(scheduledStartTime);
-            }
+    private IEnumerator StartWithoutCountdown()
+    {
+        if (musicAudio == null || musicAudio.clip == null)
+            yield break;
+
+        AudioClip clip = musicAudio.clip;
+
+        if (clip.loadState == AudioDataLoadState.Unloaded)
+        {
+            clip.LoadAudioData();
         }
+
+        while (clip.loadState == AudioDataLoadState.Loading)
+        {
+            yield return null;
+        }
+
+        if (clip.loadState != AudioDataLoadState.Loaded)
+        {
+            Debug.LogError(
+                "DelayedMusicStart: Audio could not be loaded."
+            );
+            yield break;
+        }
+
+        ScheduleMusic(AudioSettings.dspTime + 0.5);
+    }
+
+    private void ScheduleMusic(double startDsp)
+    {
+        if (musicScheduled)
+            return;
+
+        if (musicAudio == null || musicAudio.clip == null)
+            return;
+
+        musicScheduled = true;
+
+        musicAudio.Stop();
+        musicAudio.playOnAwake = false;
+        musicAudio.timeSamples = 0;
+
+        // Music playback follows the DSP clock, not frame rate.
+        musicAudio.PlayScheduled(startDsp);
+
+        // Targets receive exactly the same planned start time.
+        TargetCueManager manager =
+            Object.FindFirstObjectByType<TargetCueManager>();
+
+        if (manager != null)
+        {
+            manager.BeginTimeline(startDsp);
+        }
+        else
+        {
+            Debug.LogWarning(
+                "DelayedMusicStart: TargetCueManager not found."
+            );
+        }
+
+        Debug.Log(
+            "CUEPOINT: Music and targets scheduled at DSP " +
+            startDsp.ToString("F3")
+        );
     }
 }
