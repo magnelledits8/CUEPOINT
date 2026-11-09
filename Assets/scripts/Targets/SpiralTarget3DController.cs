@@ -10,59 +10,75 @@ public class SpiralTarget3DController : MonoBehaviour
     private const int ReadyIndex = 12;
     private const int FirstHitIndex = 13;
 
-    [Header("2D animated core (child object)")]
+    [Header("2D animated core")]
     [SerializeField] private SpriteRenderer coreRenderer;
     [SerializeField] private Sprite[] frames = new Sprite[26];
 
-    [Header("Movement in 3D space (manual mode only)")]
+    [Header("Movement - Manual Mode")]
     [SerializeField] private Transform destination;
     [SerializeField, Min(0f)] private float moveDuration = 0.5f;
     [SerializeField] private bool beginOnStart = false;
 
-    [Header("Animation timing")]
+    [Header("Animation Timing")]
     [SerializeField, Min(0.05f)] private float chargeDuration = 0.9f;
     [SerializeField, Min(0.02f)] private float hitAnimationDuration = 0.15f;
     [SerializeField] private bool hideCoreAfterHit = true;
+
+    [Tooltip("0 = use the hit timing windows. A positive value can shorten the late window.")]
     [SerializeField, Min(0f)] private float readyHoldSeconds = 0f;
     [SerializeField, Min(0.01f)] private float missFadeDuration = 0.15f;
 
-    [Header("3D outer ring")]
+    [Header("Hit Timing Windows - Seconds")]
+    [Tooltip("Earliest accepted hit before Ready Time.")]
+    [SerializeField, Min(0.01f)] private float earlyWindowSeconds = 0.20f;
+
+    [Tooltip("Perfect window before and after Ready Time.")]
+    [SerializeField, Min(0.001f)] private float perfectWindowSeconds = 0.05f;
+
+    [Tooltip("Latest accepted hit after Ready Time.")]
+    [SerializeField, Min(0.01f)] private float lateWindowSeconds = 0.15f;
+
+    [Header("Hit Points")]
+    [SerializeField, Min(0)] private int earlyPoints = 100;
+    [SerializeField, Min(0)] private int perfectPoints = 300;
+    [SerializeField, Min(0)] private int latePoints = 100;
+
+    [Header("3D Outer Ring")]
     [SerializeField] private Transform ringSegmentsRoot;
     [SerializeField] private GameObject wholeRingVisual;
 
     [Header("Fragment Explosion Settings")]
     [SerializeField, Min(0f)] private float fragmentExplosionForce = 4f;
-
-    [Tooltip("Extra upward force. Use 0 to avoid pushing everything upward.")]
     [SerializeField, Min(0f)] private float fragmentUpwardForce = 0f;
-
-    [Tooltip("How much the pieces rotate.")]
     [SerializeField, Min(0f)] private float fragmentSpinForce = 1.5f;
-
-    [Tooltip("0 = mostly straight outward. 1 = very random directions.")]
     [SerializeField, Range(0f, 1f)] private float fragmentDirectionVariation = 0.85f;
-
-    [Tooltip("Random difference in force between fragments.")]
-    [SerializeField, Range(0f, 1f)] private float fragmentSpeedVariation = 0.3f;
-
-    [Tooltip("Small random movement out of the ring's plane.")]
-    [SerializeField, Range(0f, 1f)] private float fragmentDepthVariation = 0.2f;
-
-    [SerializeField, Min(0.1f)] private float fragmentLifetime = 2f;
+    [SerializeField, Range(0f, 1f)] private float fragmentSpeedVariation = 0.30f;
+    [SerializeField, Range(0f, 1f)] private float fragmentDepthVariation = 0.20f;
+    [SerializeField, Min(0.1f)] private float fragmentLifetime = 1.2f;
     [SerializeField] private bool fragmentsUseGravity = false;
 
-    [Header("Hit detection")]
+    [Header("Hit Detection")]
     [SerializeField] private Collider targetHitCollider;
 
     private enum TargetState
     {
-        Waiting, Incoming, Charging, Ready, Hit, Missed, Finished
+        Waiting,
+        Incoming,
+        Charging,
+        Ready,
+        Hit,
+        Missed,
+        Finished
     }
 
     private TargetState state = TargetState.Waiting;
     private Coroutine sequenceRoutine;
     private Color originalCoreColor = Color.white;
     private bool startedFromCue;
+
+    private double expectedReadyTime;
+    private bool useDspClock;
+    private bool timingConfigured;
 
     private void Awake()
     {
@@ -84,6 +100,7 @@ public class SpiralTarget3DController : MonoBehaviour
             BeginSequence();
     }
 
+    // TARGET CUE MODE
     public void BeginScheduledSequence(
         Vector3 startPos,
         Quaternion startRot,
@@ -95,6 +112,13 @@ public class SpiralTarget3DController : MonoBehaviour
         float fadeTime)
     {
         startedFromCue = true;
+        useDspClock = true;
+        timingConfigured = true;
+
+        moveTime = Mathf.Max(0f, moveTime);
+        chargeTime = Mathf.Max(0f, chargeTime);
+
+        expectedReadyTime = moveStartTime + moveTime + chargeTime;
 
         if (sequenceRoutine != null)
             StopCoroutine(sequenceRoutine);
@@ -104,7 +128,7 @@ public class SpiralTarget3DController : MonoBehaviour
         if (Vector3.Distance(startPos, endPos) < 0.01f)
         {
             Debug.LogWarning(
-                name + ": Spawn Point and Hit Point are in the same position!",
+                name + ": Spawn Point and Hit Point are identical.",
                 this
             );
         }
@@ -116,8 +140,8 @@ public class SpiralTarget3DController : MonoBehaviour
                 endPos,
                 endRot,
                 moveStartTime,
-                Mathf.Max(0f, moveTime),
-                Mathf.Max(0f, chargeTime)
+                moveTime,
+                chargeTime
             )
         );
     }
@@ -133,14 +157,14 @@ public class SpiralTarget3DController : MonoBehaviour
     {
         state = TargetState.Incoming;
         SetFrame(IncomingIndex);
-        SetHitColliderEnabled(true);
+        SetHitColliderEnabled(false);
 
         while (AudioSettings.dspTime < moveStartTime)
             yield return null;
 
-        double readyTime = moveStartTime + moveTime + chargeTime;
+        SetHitColliderEnabled(true);
 
-        while (AudioSettings.dspTime < readyTime)
+        while (AudioSettings.dspTime < expectedReadyTime)
         {
             double elapsed = AudioSettings.dspTime - moveStartTime;
 
@@ -155,11 +179,15 @@ public class SpiralTarget3DController : MonoBehaviour
                 float smooth = Mathf.SmoothStep(0f, 1f, progress);
 
                 transform.position = Vector3.Lerp(
-                    startPos, endPos, smooth
+                    startPos,
+                    endPos,
+                    smooth
                 );
 
                 transform.rotation = Quaternion.Slerp(
-                    startRot, endRot, smooth
+                    startRot,
+                    endRot,
+                    smooth
                 );
 
                 SetFrame(IncomingIndex);
@@ -184,7 +212,9 @@ public class SpiralTarget3DController : MonoBehaviour
                 );
 
                 SetFrame(Mathf.Clamp(
-                    index, FirstChargeIndex, ReadyIndex
+                    index,
+                    FirstChargeIndex,
+                    ReadyIndex
                 ));
             }
 
@@ -195,31 +225,30 @@ public class SpiralTarget3DController : MonoBehaviour
         SetFrame(ReadyIndex);
         state = TargetState.Ready;
 
-        if (readyHoldSeconds > 0f)
-        {
-            double endHoldTime = readyTime + readyHoldSeconds;
-
-            while (state == TargetState.Ready &&
-                   AudioSettings.dspTime < endHoldTime)
-            {
-                yield return null;
-            }
-
-            if (state == TargetState.Ready)
-            {
-                state = TargetState.Missed;
-                SetHitColliderEnabled(false);
-                yield return FadeCoreAndFinish();
-            }
-        }
+        yield return WaitForMissDeadline();
     }
 
+    // MANUAL MODE
     public void BeginSequence()
     {
+        startedFromCue = false;
+        useDspClock = false;
+        timingConfigured = true;
+
+        float actualMoveDuration =
+            destination != null ? moveDuration : 0f;
+
+        expectedReadyTime =
+            Time.timeAsDouble +
+            actualMoveDuration +
+            chargeDuration;
+
         if (sequenceRoutine != null)
             StopCoroutine(sequenceRoutine);
 
-        sequenceRoutine = StartCoroutine(ArrivalAndChargeRoutine());
+        sequenceRoutine = StartCoroutine(
+            ArrivalAndChargeRoutine()
+        );
     }
 
     private IEnumerator ArrivalAndChargeRoutine()
@@ -238,12 +267,18 @@ public class SpiralTarget3DController : MonoBehaviour
             {
                 elapsed += Time.deltaTime;
 
-                float t = Mathf.SmoothStep(
-                    0f, 1f,
-                    Mathf.Clamp01(elapsed / moveDuration)
+                float progress = Mathf.Clamp01(
+                    elapsed / moveDuration
                 );
 
-                transform.position = Vector3.Lerp(start, end, t);
+                float smooth = Mathf.SmoothStep(0f, 1f, progress);
+
+                transform.position = Vector3.Lerp(
+                    start,
+                    end,
+                    smooth
+                );
+
                 yield return null;
             }
 
@@ -268,7 +303,9 @@ public class SpiralTarget3DController : MonoBehaviour
             );
 
             SetFrame(Mathf.Clamp(
-                index, FirstChargeIndex, ReadyIndex
+                index,
+                FirstChargeIndex,
+                ReadyIndex
             ));
 
             yield return null;
@@ -277,26 +314,124 @@ public class SpiralTarget3DController : MonoBehaviour
         SetFrame(ReadyIndex);
         state = TargetState.Ready;
 
-        if (readyHoldSeconds > 0f)
-        {
-            yield return new WaitForSeconds(readyHoldSeconds);
-
-            if (state == TargetState.Ready)
-            {
-                state = TargetState.Missed;
-                SetHitColliderEnabled(false);
-                yield return FadeCoreAndFinish();
-            }
-        }
+        yield return WaitForMissDeadline();
     }
 
+    private double GetCurrentClock()
+    {
+        return useDspClock
+            ? AudioSettings.dspTime
+            : Time.timeAsDouble;
+    }
+
+    private float GetEarlyLimit()
+    {
+        return Mathf.Max(
+            earlyWindowSeconds,
+            perfectWindowSeconds
+        );
+    }
+
+    private float GetLateLimit()
+    {
+        float allowedLate = Mathf.Max(
+            lateWindowSeconds,
+            perfectWindowSeconds
+        );
+
+        if (readyHoldSeconds > 0f)
+        {
+            allowedLate = Mathf.Min(
+                allowedLate,
+                readyHoldSeconds
+            );
+        }
+
+        return allowedLate;
+    }
+
+    private IEnumerator WaitForMissDeadline()
+    {
+        double deadline = expectedReadyTime + GetLateLimit();
+
+        while (state == TargetState.Ready &&
+               GetCurrentClock() <= deadline)
+        {
+            yield return null;
+        }
+
+        if (state != TargetState.Ready)
+            yield break;
+
+        state = TargetState.Missed;
+        SetHitColliderEnabled(false);
+
+        if (ScoreHUD.Instance != null)
+        {
+            ScoreHUD.Instance.RegisterMiss();
+        }
+
+        // NEW: Show MISS on the player's HUD.
+        if (HitJudgementHUD.Instance != null)
+        {
+            HitJudgementHUD.Instance.ShowMiss();
+        }
+
+        Debug.Log(
+            name + ": MISS - target expired.",
+            this
+        );
+
+        yield return FadeCoreAndFinish();
+    }
+
+    // EARLY / PERFECT / LATE SHOT JUDGEMENT
     public bool TryShoot()
     {
         if (!gameObject.activeInHierarchy ||
+            !timingConfigured)
+        {
+            return false;
+        }
+
+        if (state != TargetState.Incoming &&
+            state != TargetState.Charging &&
             state != TargetState.Ready)
         {
             return false;
         }
+
+        double difference =
+            GetCurrentClock() - expectedReadyTime;
+
+        if (difference < -GetEarlyLimit())
+            return false;
+
+        if (difference > GetLateLimit())
+            return false;
+
+        int awardedPoints;
+        string judgement;
+
+        if (System.Math.Abs(difference) <=
+            perfectWindowSeconds)
+        {
+            judgement = "PERFECT";
+            awardedPoints = perfectPoints;
+        }
+        else if (difference < 0.0)
+        {
+            judgement = "EARLY";
+            awardedPoints = earlyPoints;
+        }
+        else
+        {
+            judgement = "LATE";
+            awardedPoints = latePoints;
+        }
+
+        if (awardedPoints <= 0)
+            return false;
 
         state = TargetState.Hit;
         SetHitColliderEnabled(false);
@@ -305,15 +440,45 @@ public class SpiralTarget3DController : MonoBehaviour
             StopCoroutine(sequenceRoutine);
 
         SetFrame(FirstHitIndex);
-
         ExplodeOuterRing();
 
-        sequenceRoutine = StartCoroutine(HitAnimationRoutine());
+        sequenceRoutine = StartCoroutine(
+            HitAnimationRoutine()
+        );
 
+        // Existing scoring system.
         if (ScoreHUD.Instance != null)
         {
-            ScoreHUD.Instance.RegisterHit();
+            ScoreHUD.Instance.RegisterHit(awardedPoints);
         }
+
+        // NEW: Send the result to HitJudgementHUD.
+        if (HitJudgementHUD.Instance != null)
+        {
+            switch (judgement)
+            {
+                case "EARLY":
+                    HitJudgementHUD.Instance.ShowEarly();
+                    break;
+
+                case "PERFECT":
+                    HitJudgementHUD.Instance.ShowPerfect();
+                    break;
+
+                case "LATE":
+                    HitJudgementHUD.Instance.ShowLate();
+                    break;
+            }
+        }
+
+        Debug.Log(
+            name + ": " + judgement +
+            " | " + awardedPoints + " points" +
+            " | Offset: " +
+            (difference * 1000.0).ToString("F1") +
+            " ms",
+            this
+        );
 
         return true;
     }
@@ -332,16 +497,24 @@ public class SpiralTarget3DController : MonoBehaviour
             yield break;
         }
 
-        float duration = Mathf.Max(0.02f, hitAnimationDuration);
+        float duration = Mathf.Max(
+            0.02f,
+            hitAnimationDuration
+        );
+
         float startTime = Time.time;
 
         while (Time.time - startTime < duration)
         {
             float elapsed = Time.time - startTime;
-            float progress = Mathf.Clamp01(elapsed / duration);
+            float progress = Mathf.Clamp01(
+                elapsed / duration
+            );
 
             int frameOffset = Mathf.Clamp(
-                Mathf.FloorToInt(progress * totalHitFrames),
+                Mathf.FloorToInt(
+                    progress * totalHitFrames
+                ),
                 0,
                 totalHitFrames - 1
             );
@@ -361,16 +534,21 @@ public class SpiralTarget3DController : MonoBehaviour
         state = TargetState.Finished;
     }
 
+    // ORIGINAL RANDOM TORUS EXPLOSION
     private void ExplodeOuterRing()
     {
-        // Keep the 2D core outside the ring object.
-        if (wholeRingVisual != null && coreRenderer != null)
+        if (wholeRingVisual != null &&
+            coreRenderer != null)
         {
             if (coreRenderer.transform != transform &&
                 coreRenderer.transform.IsChildOf(
-                    wholeRingVisual.transform))
+                    wholeRingVisual.transform
+                ))
             {
-                coreRenderer.transform.SetParent(transform, true);
+                coreRenderer.transform.SetParent(
+                    transform,
+                    true
+                );
             }
         }
 
@@ -378,10 +556,10 @@ public class SpiralTarget3DController : MonoBehaviour
         {
             Vector3 ringCenter = ringSegmentsRoot.position;
             Vector3 ringNormal = ringSegmentsRoot.up.normalized;
-
             int segmentCount = ringSegmentsRoot.childCount;
 
-            List<Collider> fragmentColliders = new List<Collider>();
+            List<Collider> fragmentColliders =
+                new List<Collider>();
 
             for (int i = segmentCount - 1; i >= 0; i--)
             {
@@ -393,10 +571,10 @@ public class SpiralTarget3DController : MonoBehaviour
                     continue;
                 }
 
-                // Find the actual center of this ring piece.
                 Vector3 meshCenter = segment.position;
 
-                MeshFilter meshFilter = segment.GetComponent<MeshFilter>();
+                MeshFilter meshFilter =
+                    segment.GetComponent<MeshFilter>();
 
                 if (meshFilter != null &&
                     meshFilter.sharedMesh != null)
@@ -406,7 +584,6 @@ public class SpiralTarget3DController : MonoBehaviour
                     );
                 }
 
-                // Start with the piece's natural outward direction.
                 Vector3 outward = Vector3.ProjectOnPlane(
                     meshCenter - ringCenter,
                     ringNormal
@@ -414,21 +591,21 @@ public class SpiralTarget3DController : MonoBehaviour
 
                 if (outward.sqrMagnitude < 0.0001f)
                 {
-                    float angle = 360f * i / Mathf.Max(1, segmentCount);
+                    float angle =
+                        360f * i /
+                        Mathf.Max(1, segmentCount);
 
                     outward = Quaternion.AngleAxis(
-                        angle, ringNormal
+                        angle,
+                        ringNormal
                     ) * ringSegmentsRoot.right;
                 }
 
                 outward.Normalize();
 
-                // RANDOMNESS:
-                // Rotate each piece's outward direction by a random angle.
-                // Higher variation makes the explosion less predictable.
                 float randomAngle = Random.Range(
                     -135f * fragmentDirectionVariation,
-                     135f * fragmentDirectionVariation
+                    135f * fragmentDirectionVariation
                 );
 
                 Vector3 direction = Quaternion.AngleAxis(
@@ -436,20 +613,19 @@ public class SpiralTarget3DController : MonoBehaviour
                     ringNormal
                 ) * outward;
 
-                // Add small random movement into or out of the ring plane.
                 direction += ringNormal * Random.Range(
                     -fragmentDepthVariation,
                     fragmentDepthVariation
                 );
 
-                // Optional upward boost.
                 direction += Vector3.up * fragmentUpwardForce;
-
                 direction.Normalize();
 
-                // Each fragment gets a different strength.
                 float randomStrength = Random.Range(
-                    Mathf.Max(0.1f, 1f - fragmentSpeedVariation),
+                    Mathf.Max(
+                        0.1f,
+                        1f - fragmentSpeedVariation
+                    ),
                     1f + fragmentSpeedVariation
                 );
 
@@ -469,9 +645,10 @@ public class SpiralTarget3DController : MonoBehaviour
                     segmentCollider as MeshCollider;
 
                 if (meshCollider != null)
+                {
                     meshCollider.convex = true;
+                }
 
-                // Prevent ring pieces from colliding with each other.
                 foreach (Collider otherCollider in fragmentColliders)
                 {
                     if (otherCollider != null)
@@ -488,7 +665,10 @@ public class SpiralTarget3DController : MonoBehaviour
                 Rigidbody body = segment.GetComponent<Rigidbody>();
 
                 if (body == null)
-                    body = segment.gameObject.AddComponent<Rigidbody>();
+                {
+                    body =
+                        segment.gameObject.AddComponent<Rigidbody>();
+                }
 
                 body.isKinematic = false;
                 body.useGravity = fragmentsUseGravity;
@@ -497,39 +677,43 @@ public class SpiralTarget3DController : MonoBehaviour
                 body.linearVelocity = Vector3.zero;
                 body.angularVelocity = Vector3.zero;
 
-                // Use the original impulse-based physics feel.
                 body.AddForce(
-                    direction * fragmentExplosionForce * randomStrength,
+                    direction *
+                    fragmentExplosionForce *
+                    randomStrength,
                     ForceMode.Impulse
                 );
 
-                // Random rotation for each piece.
                 body.AddTorque(
                     Random.insideUnitSphere * fragmentSpinForce,
                     ForceMode.Impulse
                 );
 
-                Destroy(segment.gameObject, fragmentLifetime);
+                Destroy(
+                    segment.gameObject,
+                    fragmentLifetime
+                );
             }
         }
 
-        // Hide the original ring without disabling the target.
         if (wholeRingVisual != null)
         {
             MeshRenderer[] ringRenderers =
-                wholeRingVisual.GetComponentsInChildren<MeshRenderer>(true);
+                wholeRingVisual
+                    .GetComponentsInChildren<MeshRenderer>(true);
 
-            foreach (MeshRenderer ringRenderer in ringRenderers)
+            foreach (MeshRenderer renderer in ringRenderers)
             {
-                ringRenderer.enabled = false;
+                renderer.enabled = false;
             }
 
             Collider[] ringColliders =
-                wholeRingVisual.GetComponentsInChildren<Collider>(true);
+                wholeRingVisual
+                    .GetComponentsInChildren<Collider>(true);
 
-            foreach (Collider ringCollider in ringColliders)
+            foreach (Collider collider in ringColliders)
             {
-                ringCollider.enabled = false;
+                collider.enabled = false;
             }
         }
     }
@@ -583,6 +767,8 @@ public class SpiralTarget3DController : MonoBehaviour
     private void SetHitColliderEnabled(bool enabledState)
     {
         if (targetHitCollider != null)
+        {
             targetHitCollider.enabled = enabledState;
+        }
     }
 }

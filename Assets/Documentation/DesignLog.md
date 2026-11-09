@@ -52,4 +52,10 @@ Mini tutorial on timing, Leaderboard
 | 2026-10-27 | **Player Movement & Intro Intro** | Programmed basic movement, jumping, and sliding controls. Started working on the first phase of the player intro animation. | 6 hours |
 | 2026-10-28 | **Physics Polish & DeltaTime** | Adjusted player gravity and ground-snapping slides. Updated movement frames to use Time.deltaTime to ensure consistent game speed across different computer hardware. | 4 hours |
 | 2026-10-31 | **Gun & Animations Complete** | Finished the final phase of the player intro animation. Added the weapon mesh along with hand animations, a muzzle flash effect, and implemented a weapon recoil and camera bopping script. | 8 hours |
-| | **Total** | | **32 hours** |
+| 2026-11-01 | **Update Raycasting & Better muzzleflash** | Polished the muzzle flash visual. Improved my script by changing to raycasting | 3 hours |
+| 2026-11-02 | **Added documentaion** | Added Concept, Designlog and gates | 1 hours |
+| 2026-11-02 | **Added Greybox** | Late add but added after lecture | 1 hours |
+| 2026-11-05 | **Small fixes** | Removed useless scripts and added intro scene | 2 hours |
+| 2026-11-08 | **Added HUD** | ScoreHUD, HitJudgementText, TimerHUD, TimingHUD | 5 hours |
+
+| | **Total** | | **44 hours** |

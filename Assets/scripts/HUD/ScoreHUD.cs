@@ -1,3 +1,4 @@
+
 using TMPro;
 using UnityEngine;
 
@@ -9,7 +10,7 @@ public class ScoreHUD : MonoBehaviour
     [SerializeField] private TMP_Text scoreText;
     [SerializeField] private TMP_Text comboText;
 
-    [Header("Points")]
+    [Header("Default Points")]
     [SerializeField, Min(0)] private int pointsPerHit = 300;
 
     private int score;
@@ -19,7 +20,11 @@ public class ScoreHUD : MonoBehaviour
     {
         if (Instance != null && Instance != this)
         {
-            Debug.LogWarning("Only one ScoreHUD should exist in this scene.", this);
+            Debug.LogWarning(
+                "Only one ScoreHUD should exist in this scene.",
+                this
+            );
+
             Destroy(this);
             return;
         }
@@ -28,10 +33,18 @@ public class ScoreHUD : MonoBehaviour
         RefreshText();
     }
 
+    // Keeps compatibility with scripts using RegisterHit().
     public void RegisterHit()
     {
-        score += pointsPerHit;
+        RegisterHit(pointsPerHit);
+    }
+
+    // NEW: Different points for Early, Perfect and Late.
+    public void RegisterHit(int points)
+    {
+        score += Mathf.Max(0, points);
         combo++;
+
         RefreshText();
     }
 
@@ -44,21 +57,34 @@ public class ScoreHUD : MonoBehaviour
     private void RefreshText()
     {
         if (scoreText != null)
+        {
             scoreText.text = score.ToString("D6");
+        }
 
+        // Your Canvas already contains the separate "COMBO x".
         if (comboText != null)
+        {
             comboText.text = combo.ToString();
+        }
     }
 
     [ContextMenu("TEST - Add successful hit")]
-    private void TestHit() => RegisterHit();
+    private void TestHit()
+    {
+        RegisterHit();
+    }
 
     [ContextMenu("TEST - Register miss")]
-    private void TestMiss() => RegisterMiss();
+    private void TestMiss()
+    {
+        RegisterMiss();
+    }
 
     private void OnDestroy()
     {
         if (Instance == this)
+        {
             Instance = null;
+        }
     }
 }

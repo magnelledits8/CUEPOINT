@@ -1,6 +1,6 @@
+
 using UnityEngine;
 
-[ExecuteAlways] // Allows the script to run in the Editor without pressing Play
 public class CorridorSequenceBuilder : MonoBehaviour
 {
     [Header("Corridor Prefabs")]
@@ -9,40 +9,31 @@ public class CorridorSequenceBuilder : MonoBehaviour
     [Header("Generation Settings")]
     [SerializeField, Min(1)] private int repeatCount = 3;
     [SerializeField, Min(0.01f)] private float lengthMultiplier = 1f;
-    [SerializeField] private bool buildOnPlay = true;
+
+    [Header("Automatic Generation")]
+    [Tooltip("Keep OFF when manually editing the level.")]
+    [SerializeField] private bool buildOnPlay = false;
 
     private const string GeneratedName = "Generated Corridor";
 
     private void Start()
     {
-        // Only build on start if we are actually playing the game and buildOnPlay is true
+        // Optional generation when the game starts.
+        // Existing corridors will never be overwritten.
         if (Application.isPlaying && buildOnPlay)
         {
-            BuildCorridor();
+            if (transform.Find(GeneratedName) == null)
+            {
+                BuildCorridor();
+            }
+            else
+            {
+                Debug.Log(
+                    "Corridor already exists. Manual edits are preserved.",
+                    this
+                );
+            }
         }
-    }
-
-    // This built-in Unity function runs automatically whenever you change a value in the Inspector
-    private void OnValidate()
-    {
-        // Guard clause to prevent infinite loops or errors during prefab editing
-        if (gameObject.scene.rootCount == 0) return;
-
-        // Automatically rebuild the corridor in the editor as you change settings
-        if (!Application.isPlaying)
-        {
-            // Delay the call slightly to ensure Unity's hierarchy is ready to handle Instantiate/Destroy
-#if UNITY_EDITOR
-            UnityEditor.EditorApplication.delayCall -= ExecuteEditorBuild;
-            UnityEditor.EditorApplication.delayCall += ExecuteEditorBuild;
-#endif
-        }
-    }
-
-    private void ExecuteEditorBuild()
-    {
-        if (this == null) return;
-        BuildCorridor();
     }
 
     [ContextMenu("Build Corridor")]
@@ -51,10 +42,30 @@ public class CorridorSequenceBuilder : MonoBehaviour
         if (!ValidatePrefabs())
             return;
 
-        ClearGeneratedCorridor();
+        // IMPORTANT:
+        // Never overwrite an existing corridor.
+        Transform existingCorridor =
+            transform.Find(GeneratedName);
 
-        GameObject generatedObject = new GameObject(GeneratedName);
-        Transform generatedRoot = generatedObject.transform;
+        if (existingCorridor != null)
+        {
+            Debug.LogWarning(
+                "A Generated Corridor already exists. " +
+                "It has NOT been rebuilt, so your manual " +
+                "floor and hazard edits are preserved. " +
+                "Use Clear Generated Corridor only if " +
+                "you intentionally want to start over.",
+                this
+            );
+
+            return;
+        }
+
+        GameObject generatedObject =
+            new GameObject(GeneratedName);
+
+        Transform generatedRoot =
+            generatedObject.transform;
 
         generatedRoot.SetParent(transform, false);
 
@@ -64,7 +75,6 @@ public class CorridorSequenceBuilder : MonoBehaviour
         // Repeat the entire prefab sequence.
         for (int repeat = 0; repeat < repeatCount; repeat++)
         {
-            // Place each prefab in the assigned order.
             foreach (GameObject prefab in corridorPrefabs)
             {
                 GameObject segment = Instantiate(
@@ -74,48 +84,70 @@ public class CorridorSequenceBuilder : MonoBehaviour
 
                 segment.name = prefab.name;
 
-                // Stretch the segment along its local Z axis.
-                Vector3 originalScale = prefab.transform.localScale;
+                // Stretch along local Z.
+                Vector3 originalScale =
+                    prefab.transform.localScale;
 
-                segment.transform.localScale = new Vector3(
-                    originalScale.x,
-                    originalScale.y,
-                    originalScale.z * lengthMultiplier
-                );
+                segment.transform.localScale =
+                    new Vector3(
+                        originalScale.x,
+                        originalScale.y,
+                        originalScale.z * lengthMultiplier
+                    );
 
-                Transform entry = segment.transform.Find("EntryPoint");
-                Transform exit = segment.transform.Find("ExitPoint");
+                Transform entry =
+                    segment.transform.Find("EntryPoint");
 
-                // Rotate the segment to match the previous exit.
+                Transform exit =
+                    segment.transform.Find("ExitPoint");
+
+                // Rotate to match the previous exit.
                 Quaternion rotationOffset =
                     currentConnection.rotation *
                     Quaternion.Inverse(entry.rotation);
 
                 segment.transform.rotation =
-                    rotationOffset * segment.transform.rotation;
+                    rotationOffset *
+                    segment.transform.rotation;
 
-                // Move the segment so the entry points connect.
+                // Connect the entrance to the previous exit.
                 segment.transform.position +=
-                    currentConnection.position - entry.position;
+                    currentConnection.position -
+                    entry.position;
 
-                // The next segment connects to this segment's exit.
+                // Next section begins at this exit.
                 currentConnection = exit;
             }
         }
+
+        Debug.Log(
+            "Corridor generated successfully. " +
+            "You can now edit floor sections manually.",
+            this
+        );
     }
 
     private bool ValidatePrefabs()
     {
-        if (corridorPrefabs == null || corridorPrefabs.Length == 0)
+        if (corridorPrefabs == null ||
+            corridorPrefabs.Length == 0)
         {
-            // Reduced log severity for editor comfort, prevents console spamming when array is empty
-            if (Application.isPlaying) Debug.LogError("No corridor prefabs assigned.", this);
+            Debug.LogError(
+                "No corridor prefabs assigned.",
+                this
+            );
+
             return false;
         }
 
-        if (repeatCount < 1 || lengthMultiplier <= 0f)
+        if (repeatCount < 1 ||
+            lengthMultiplier <= 0f)
         {
-            if (Application.isPlaying) Debug.LogError("Check repeat count and length multiplier.", this);
+            Debug.LogError(
+                "Check Repeat Count and Length Multiplier.",
+                this
+            );
+
             return false;
         }
 
@@ -123,14 +155,23 @@ public class CorridorSequenceBuilder : MonoBehaviour
         {
             if (prefab == null)
             {
+                Debug.LogError(
+                    "One corridor prefab is missing.",
+                    this
+                );
+
                 return false;
             }
 
             if (prefab.transform.Find("EntryPoint") == null ||
                 prefab.transform.Find("ExitPoint") == null)
             {
-                if (Application.isPlaying)
-                    Debug.LogError(prefab.name + " is missing EntryPoint or ExitPoint.", prefab);
+                Debug.LogError(
+                    prefab.name +
+                    " is missing EntryPoint or ExitPoint.",
+                    prefab
+                );
+
                 return false;
             }
         }
@@ -141,14 +182,32 @@ public class CorridorSequenceBuilder : MonoBehaviour
     [ContextMenu("Clear Generated Corridor")]
     public void ClearGeneratedCorridor()
     {
-        Transform oldGenerated = transform.Find(GeneratedName);
+        Transform existingCorridor =
+            transform.Find(GeneratedName);
 
-        if (oldGenerated != null)
+        if (existingCorridor == null)
         {
-            if (Application.isPlaying)
-                Destroy(oldGenerated.gameObject);
-            else
-                DestroyImmediate(oldGenerated.gameObject);
+            Debug.Log(
+                "No generated corridor to remove.",
+                this
+            );
+
+            return;
         }
+
+        if (Application.isPlaying)
+        {
+            Destroy(existingCorridor.gameObject);
+        }
+        else
+        {
+            DestroyImmediate(existingCorridor.gameObject);
+        }
+
+        Debug.LogWarning(
+            "Generated Corridor removed. " +
+            "Manual edits inside it have also been removed.",
+            this
+        );
     }
 }

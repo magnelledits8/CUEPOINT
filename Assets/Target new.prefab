@@ -104,6 +104,12 @@ MonoBehaviour:
   hideCoreAfterHit: 0
   readyHoldSeconds: 0
   missFadeDuration: 0.15
+  earlyWindowSeconds: 0.91
+  perfectWindowSeconds: 0.44
+  lateWindowSeconds: 0.65
+  earlyPoints: 100
+  perfectPoints: 300
+  latePoints: 100
   ringSegmentsRoot: {fileID: 4843454365584506470}
   wholeRingVisual: {fileID: 4386396931463266428}
   fragmentExplosionForce: 3.92

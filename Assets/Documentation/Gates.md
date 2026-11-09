@@ -40,19 +40,32 @@ Required
 Quick ones (still needed, rough is fine, a few minutes each)
 
 - [x] Content scope: a short list of counts (Completed)
-- [ ] Roadmap: 4 lines, one per stage, each with a date  
-- [ ] Screen flow: a phone photo of a paper sketch of your screens (start, HUD, pause, win and/or lose)
+- [x] Roadmap: 4 lines, one per stage, each with a date  
+- [x] Screen flow: a phone photo of a paper sketch of your screens (start, HUD, pause, win and/or lose)
+
 
 ### Content Scope
 * **World & Gameplay:** 1 Level (Futuristic 3-lane corridor), 50+ Rhythm targets minimum, 1 Hazard type (Missing floor).
 * **Audio & Visuals:** 5 Sound effects (SFX: Fire a shot, Intro, jump/land), 1 Music track, 1 menu mouse hover.
 * **UI & Screens:** 1 Intro/Main Menu, 1 Settings Menu (Volume, Customizable Crosshair), 1 Unique In-game Pause Menu (with Reset Button), 1 Finish Screen (Score, accuracy, timing feedback).
 
+## Roadmap – CUEPOINT
+
+| Date | Stage | Planned Development |
+|---|---|---|
+| Nov 2 | Concept | Define the rhythm-based shooter concept, three-lane movement, target mechanics and visual direction. |
+| Nov 4 | Preproduction | Build the first playable prototype with automatic running, lane switching, jumping, basic shooting and targets synchronized with music. |
+| Nov 9 | Production | Implement target animations, Early/Perfect/Late scoring, timing HUD, menus and corridor generation. Start building the level with obstacles and hazards. |
+| Nov 12 | Closing | Complete the playable level, improve visuals and audio feedback, fix gameplay bugs and prepare the Windows build for playtesting. |
+
+
+
 In Unity, recommended
 
-- [ ] A classmate played it while I watched without saying anything, and I wrote down what they did
+- [x] A classmate played it while I watched without saying anything, and I wrote down what they did
 
-Peer review - reviewed by: ________   Go / Not yet: ________ What they said, in one line:
+Peer review - reviewed by: Brian   Go / Not yet: Not yet   What they said, in one line: Tried to move in the intro with no response on the screen. (I moved the countdown timer to be more synced)
+Talked about Visuals for hits/timing. (Added)
 
 ---
 
@@ -61,7 +74,7 @@ Peer review - reviewed by: ________   Go / Not yet: ________ What they said, in 
 Documents
 
 - [x] DesignLog.md updated  
-- [x] Cut list: what I dropped, and why
+- [x] Cut list: what I dropped, and why (Nothing dropped) (Left to do: End screen, Pause menu, build the rest of the map.)
 
 In Unity
 
