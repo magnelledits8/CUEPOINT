@@ -1,3 +1,4 @@
+
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -18,29 +19,34 @@ public class WeaponController : MonoBehaviour
     public float flashDuration = 0.05f;
 
     [Header("Dynamic Glow (3D Glow)")]
-    public Light muzzleLight;            // Drag your Point Light here
-    public float maxLightIntensity = 5f; // Initial brightness intensity
-    public float lightCoolDownSpeed = 15f; // How fast the glow cools down and disappears
+    public Light muzzleLight;
+    public float maxLightIntensity = 5f;
+    public float lightCoolDownSpeed = 15f;
 
     [Header("Bullet / Tracer")]
-    public GameObject bulletTracerPrefab; // Create a small 3D capsule/sphere and drag it here
-    public Transform muzzlePoint;         // The point where the bullet starts (tip of the barrel)
-    public float bulletSpeed = 100f;      // How fast the bullet flies forward
-    public float bulletLifeTime = 0.2f;   // How long the bullet is visible before being destroyed
+    public GameObject bulletTracerPrefab;
+    public Transform muzzlePoint;
+    public float bulletSpeed = 100f;
+    public float bulletLifeTime = 0.2f;
 
     [Header("Fire Rate")]
     public float fireRate = 0.5f;
 
     [Header("Audio / Sound")]
     public AudioClip gunFireSound;
-    [Range(0f, 1f)] public float volume = 0.8f;
+
+    [Range(0f, 1f)]
+    public float volume = 0.8f;
+
     [Tooltip("Sound delay in seconds. Set to 0 for instant playback.")]
     public float soundDelay = 0f;
 
     private AudioSource audioSource;
     private ParticleSystem flashParticles;
+
     private Vector3 originalPosition;
     private Quaternion originalRotation;
+
     private float currentRecoil = 0f;
     private float timer = 0f;
 
@@ -53,6 +59,7 @@ public class WeaponController : MonoBehaviour
         originalRotation = transform.localRotation;
 
         audioSource = GetComponent<AudioSource>();
+
         if (audioSource == null)
         {
             audioSource = gameObject.AddComponent<AudioSource>();
@@ -65,14 +72,16 @@ public class WeaponController : MonoBehaviour
         if (myMuzzleFlash != null)
         {
             flashParticles = myMuzzleFlash.GetComponent<ParticleSystem>();
+
             if (flashParticles == null)
             {
-                flashParticles = myMuzzleFlash.GetComponentInChildren<ParticleSystem>();
+                flashParticles =
+                    myMuzzleFlash.GetComponentInChildren<ParticleSystem>();
             }
+
             myMuzzleFlash.SetActive(false);
         }
 
-        // Forces the light to be completely turned off when the game starts
         if (muzzleLight != null)
         {
             muzzleLight.intensity = 0f;
@@ -81,8 +90,17 @@ public class WeaponController : MonoBehaviour
 
     void Update()
     {
-        // 1. SHOOTING (Left Click)
-        if (Mouse.current != null && Mouse.current.leftButton.wasPressedThisFrame && Time.time >= nextTimeToFire)
+        // Shooting is only allowed while the game is active
+        // and the cursor is locked to the gameplay camera.
+        bool canShoot =
+            Time.timeScale > 0f &&
+            Cursor.lockState == CursorLockMode.Locked;
+
+        // SHOOTING
+        if (canShoot &&
+            Mouse.current != null &&
+            Mouse.current.leftButton.wasPressedThisFrame &&
+            Time.time >= nextTimeToFire)
         {
             nextTimeToFire = Time.time + fireRate;
             currentRecoil = recoilAngle;
@@ -114,72 +132,96 @@ public class WeaponController : MonoBehaviour
                 flashTimer = Time.time + flashDuration;
             }
 
-            // TURN ON GLOW (Point Light triggers instantly)
+            // TURN ON GLOW
             if (muzzleLight != null)
             {
                 muzzleLight.intensity = maxLightIntensity;
             }
 
-            // SPAWN BULLET (Tracer)
             SpawnBulletTracer();
         }
 
-        // Automatic deactivation of the 2D flash
-        if (myMuzzleFlash != null && myMuzzleFlash.activeSelf && Time.time >= flashTimer)
+        // Hide muzzle flash after its duration.
+        if (myMuzzleFlash != null &&
+            myMuzzleFlash.activeSelf &&
+            Time.time >= flashTimer)
         {
             myMuzzleFlash.SetActive(false);
         }
 
-        // COOLING GLOW: Smoothly fades out the Point Light to 0 over time
+        // Cool down muzzle light.
         if (muzzleLight != null && muzzleLight.intensity > 0f)
         {
-            muzzleLight.intensity = Mathf.MoveTowards(muzzleLight.intensity, 0f, Time.deltaTime * lightCoolDownSpeed);
+            muzzleLight.intensity = Mathf.MoveTowards(
+                muzzleLight.intensity,
+                0f,
+                Time.deltaTime * lightCoolDownSpeed
+            );
         }
 
-        // Smoothly return recoil
-        currentRecoil = Mathf.Lerp(currentRecoil, 0f, Time.deltaTime * returnSpeed);
+        // Return recoil.
+        currentRecoil = Mathf.Lerp(
+            currentRecoil,
+            0f,
+            Time.deltaTime * returnSpeed
+        );
 
-        // 2. IDLE BOBBING
+        // Idle bobbing.
         timer += Time.deltaTime * bobSpeed;
+
         float bobX = Mathf.Sin(timer) * bobAmountX;
         float bobY = Mathf.Sin(timer * 2f) * bobAmountY;
 
-        Vector3 targetPosition = originalPosition + new Vector3(bobX, bobY, 0f);
-        Quaternion targetRotation = originalRotation * Quaternion.Euler(currentRecoil, 0f, 0f);
+        Vector3 targetPosition =
+            originalPosition + new Vector3(bobX, bobY, 0f);
+
+        Quaternion targetRotation =
+            originalRotation *
+            Quaternion.Euler(currentRecoil, 0f, 0f);
 
         transform.localPosition = targetPosition;
-        transform.localRotation = Quaternion.Slerp(transform.localRotation, targetRotation, Time.deltaTime * recoilSpeed);
+
+        transform.localRotation = Quaternion.Slerp(
+            transform.localRotation,
+            targetRotation,
+            Time.deltaTime * recoilSpeed
+        );
     }
 
     void SpawnBulletTracer()
     {
         if (bulletTracerPrefab != null && muzzlePoint != null)
         {
-            // Spawns the bullet at the muzzle
-            GameObject tracer = Instantiate(bulletTracerPrefab, muzzlePoint.position, muzzlePoint.rotation);
+            GameObject tracer = Instantiate(
+                bulletTracerPrefab,
+                muzzlePoint.position,
+                muzzlePoint.rotation
+            );
 
-            // Gives the bullet forward velocity (in the muzzle's forward direction)
             Rigidbody rb = tracer.GetComponent<Rigidbody>();
+
             if (rb != null)
             {
                 rb.linearVelocity = muzzlePoint.forward * bulletSpeed;
             }
             else
             {
-                // If there is no Rigidbody on the bullet, we add it safely because ConstantForce requires it
                 rb = tracer.AddComponent<Rigidbody>();
-                rb.useGravity = false; // Prevent the bullet from falling down
+                rb.useGravity = false;
 
-                tracer.AddComponent<ConstantForce>().force = muzzlePoint.forward * bulletSpeed * 10f;
+                tracer.AddComponent<ConstantForce>().force =
+                    muzzlePoint.forward * bulletSpeed * 10f;
             }
 
-            // Automatically destroy the bullet after a fraction of a second so it doesn't fly forever
             Destroy(tracer, bulletLifeTime);
         }
     }
 
     void PlayShotSound()
     {
-        audioSource.PlayOneShot(gunFireSound, volume);
+        if (audioSource != null && gunFireSound != null)
+        {
+            audioSource.PlayOneShot(gunFireSound, volume);
+        }
     }
 }

@@ -1,3 +1,4 @@
+
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -11,9 +12,10 @@ public class MouseLook : MonoBehaviour
     private float xRotation = 0f;
     private float yRotation = 0f;
 
+    private bool wasPaused = false;
+
     void Start()
     {
-        // Lock the cursor to the center of the screen and make it invisible
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
 
@@ -21,25 +23,49 @@ public class MouseLook : MonoBehaviour
         {
             playerBody = transform.parent;
         }
+
+        Vector3 currentRotation = transform.localEulerAngles;
+
+        xRotation = Mathf.DeltaAngle(0f, currentRotation.x);
+        yRotation = currentRotation.y;
     }
 
     void Update()
     {
-        // Reads mouse delta directly from the new Input System (FPS-independent Raw Input)
+        // Do not rotate the camera when the game is paused.
+        if (Time.timeScale == 0f)
+        {
+            wasPaused = true;
+            return;
+        }
+
+        // Ignore mouse movement on the first frame after
+        // closing the pause menu to prevent camera jumping.
+        if (wasPaused)
+        {
+            wasPaused = false;
+            return;
+        }
+
+        if (Mouse.current == null)
+        {
+            return;
+        }
+
         Vector2 mouseDelta = Mouse.current.delta.ReadValue();
 
         float mouseX = mouseDelta.x * sensitivity;
         float mouseY = mouseDelta.y * sensitivity;
 
-        // 1. STRICT VERTICAL CLAMP (Aimlabs style): Never flips upside down
+        // Vertical rotation with the original limits.
         xRotation -= mouseY;
         xRotation = Mathf.Clamp(xRotation, -89f, 89f);
 
-        // 2. Horizontal rotation (Look left/right)
-        // Applied directly to the camera's transform instead of the body to prevent running sideways!
+        // Horizontal rotation.
         yRotation += mouseX;
 
-        // 3. Apply the full rotation stably directly to the camera's transform
-        transform.localRotation = Quaternion.Euler(xRotation, yRotation, 0f);
+        // Rotate only the camera, not the player body.
+        transform.localRotation =
+            Quaternion.Euler(xRotation, yRotation, 0f);
     }
 }
