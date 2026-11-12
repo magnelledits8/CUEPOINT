@@ -3,6 +3,10 @@
   "WorkspaceRootPath": "D:\\CUEPOINT\\",
   "Documents": [
     {
+      "AbsoluteMoniker": "D:0:0:{B4CD19DA-EE08-5225-FB19-1D0DFA4113DD}|Assembly-CSharp.csproj|d:\\cuepoint\\assets\\scripts\\sensitivitysettingscontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{B4CD19DA-EE08-5225-FB19-1D0DFA4113DD}|Assembly-CSharp.csproj|solutionrelative:assets\\scripts\\sensitivitysettingscontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
       "AbsoluteMoniker": "D:0:0:{B4CD19DA-EE08-5225-FB19-1D0DFA4113DD}|Assembly-CSharp.csproj|d:\\cuepoint\\assets\\scripts\\levelfinnishtrigger.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{B4CD19DA-EE08-5225-FB19-1D0DFA4113DD}|Assembly-CSharp.csproj|solutionrelative:assets\\scripts\\levelfinnishtrigger.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
@@ -46,11 +50,11 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 0,
+          "SelectedChildIndex": 9,
           "Children": [
             {
               "$type": "Document",
-              "DocumentIndex": 0,
+              "DocumentIndex": 1,
               "Title": "LevelFinnishTrigger.cs",
               "DocumentMoniker": "D:\\CUEPOINT\\Assets\\scripts\\LevelFinnishTrigger.cs",
               "RelativeDocumentMoniker": "Assets\\scripts\\LevelFinnishTrigger.cs",
@@ -58,12 +62,11 @@
               "RelativeToolTip": "Assets\\scripts\\LevelFinnishTrigger.cs",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAC8AAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-11-10T22:41:21.5Z",
-              "EditorCaption": ""
+              "WhenOpened": "2026-11-10T22:41:21.5Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 1,
+              "DocumentIndex": 2,
               "Title": "WinScreenController.cs",
               "DocumentMoniker": "D:\\CUEPOINT\\Assets\\scripts\\WinScreenController.cs",
               "RelativeDocumentMoniker": "Assets\\scripts\\WinScreenController.cs",
@@ -71,12 +74,11 @@
               "RelativeToolTip": "Assets\\scripts\\WinScreenController.cs",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAACwAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-11-10T22:32:30.482Z",
-              "EditorCaption": ""
+              "WhenOpened": "2026-11-10T22:32:30.482Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 2,
+              "DocumentIndex": 3,
               "Title": "ReturnMenuController.cs",
               "DocumentMoniker": "D:\\CUEPOINT\\Assets\\scripts\\ReturnMenuController.cs",
               "RelativeDocumentMoniker": "Assets\\scripts\\ReturnMenuController.cs",
@@ -84,12 +86,11 @@
               "RelativeToolTip": "Assets\\scripts\\ReturnMenuController.cs",
               "ViewState": "AgIAAAYAAAAAAAAAAAAUwEEAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-11-10T21:35:23.029Z",
-              "EditorCaption": ""
+              "WhenOpened": "2026-11-10T21:35:23.029Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 4,
+              "DocumentIndex": 5,
               "Title": "WeaponController.cs",
               "DocumentMoniker": "D:\\CUEPOINT\\Assets\\Gun and Sound\\WeaponController.cs",
               "RelativeDocumentMoniker": "Assets\\Gun and Sound\\WeaponController.cs",
@@ -97,12 +98,11 @@
               "RelativeToolTip": "Assets\\Gun and Sound\\WeaponController.cs",
               "ViewState": "AgIAAKgAAAAAAAAAAAAUwOMAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-11-10T20:57:32.282Z",
-              "EditorCaption": ""
+              "WhenOpened": "2026-11-10T20:57:32.282Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 7,
+              "DocumentIndex": 8,
               "Title": "PlayerShooting.cs",
               "DocumentMoniker": "D:\\CUEPOINT\\Assets\\scripts\\Player\\PlayerShooting.cs",
               "RelativeDocumentMoniker": "Assets\\scripts\\Player\\PlayerShooting.cs",
@@ -110,12 +110,11 @@
               "RelativeToolTip": "Assets\\scripts\\Player\\PlayerShooting.cs",
               "ViewState": "AgIAAIUAAAAAAAAAAAAUwLoAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-11-10T20:48:19.503Z",
-              "EditorCaption": ""
+              "WhenOpened": "2026-11-10T20:48:19.503Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 5,
+              "DocumentIndex": 6,
               "Title": "MouseLook.cs",
               "DocumentMoniker": "D:\\CUEPOINT\\Assets\\scripts\\Player\\MouseLook.cs",
               "RelativeDocumentMoniker": "Assets\\scripts\\Player\\MouseLook.cs",
@@ -123,12 +122,11 @@
               "RelativeToolTip": "Assets\\scripts\\Player\\MouseLook.cs",
               "ViewState": "AgIAABAAAAAAAAAAAAA6wEcAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-11-10T20:48:12.631Z",
-              "EditorCaption": ""
+              "WhenOpened": "2026-11-10T20:48:12.631Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 8,
+              "DocumentIndex": 9,
               "Title": "SceneLoader.cs",
               "DocumentMoniker": "D:\\CUEPOINT\\Assets\\scripts\\SceneLoader.cs",
               "RelativeDocumentMoniker": "Assets\\scripts\\SceneLoader.cs",
@@ -140,7 +138,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 3,
+              "DocumentIndex": 4,
               "Title": "IntroController.cs",
               "DocumentMoniker": "D:\\CUEPOINT\\Assets\\scripts\\IntroController.cs",
               "RelativeDocumentMoniker": "Assets\\scripts\\IntroController.cs",
@@ -148,12 +146,11 @@
               "RelativeToolTip": "Assets\\scripts\\IntroController.cs",
               "ViewState": "AgIAAOgAAAAAAAAAAAAkwCEBAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-11-09T03:01:27.756Z",
-              "EditorCaption": ""
+              "WhenOpened": "2026-11-09T03:01:27.756Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 6,
+              "DocumentIndex": 7,
               "Title": "PauseMenuController.cs",
               "DocumentMoniker": "D:\\CUEPOINT\\Assets\\scripts\\PauseMenuController.cs",
               "RelativeDocumentMoniker": "Assets\\scripts\\PauseMenuController.cs",
@@ -161,7 +158,19 @@
               "RelativeToolTip": "Assets\\scripts\\PauseMenuController.cs",
               "ViewState": "AgIAALQAAAAAAAAAAAAUwO8AAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-11-10T20:19:49.038Z",
+              "WhenOpened": "2026-11-10T20:19:49.038Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "SensitivitySettingsController.cs",
+              "DocumentMoniker": "D:\\CUEPOINT\\Assets\\scripts\\SensitivitySettingsController.cs",
+              "RelativeDocumentMoniker": "Assets\\scripts\\SensitivitySettingsController.cs",
+              "ToolTip": "D:\\CUEPOINT\\Assets\\scripts\\SensitivitySettingsController.cs",
+              "RelativeToolTip": "Assets\\scripts\\SensitivitySettingsController.cs",
+              "ViewState": "AgIAAHwAAAAAAAAAAAAUwKcAAAAyAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-11-11T04:54:35.192Z",
               "EditorCaption": ""
             }
           ]
