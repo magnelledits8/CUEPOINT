@@ -33,14 +33,14 @@ public class SyncTestMonitor : MonoBehaviour
 
     void Start()
     {
-        // Save original settings.
+        // Save the current FPS settings
         originalFPS = Application.targetFrameRate;
         originalVSync = QualitySettings.vSyncCount;
 
-        // Disable VSync during testing.
+        // Turn off VSync for testing
         QualitySettings.vSyncCount = 0;
 
-        // Apply requested FPS limit.
+        // Set the FPS limit for the test
         Application.targetFrameRate = targetFPS;
 
         if (musicSource == null || player == null)
@@ -57,7 +57,7 @@ public class SyncTestMonitor : MonoBehaviour
 
     void Update()
     {
-        // Measure actual FPS.
+        // Check the current FPS
         fpsTimer += Time.unscaledDeltaTime;
         frameCounter++;
 
@@ -82,13 +82,13 @@ public class SyncTestMonitor : MonoBehaviour
             return;
         }
 
-        // Read the music position in samples.
+        // Get the current time in the song
         musicTime = (float)musicSource.timeSamples /
                     musicSource.clip.frequency;
 
         float currentZ = player.transform.position.z;
 
-        // Reset checkpoints if the song restarts.
+        // Reset the checkpoints if the music restarts
         if (previousMusicTime >= 0f &&
             musicTime < previousMusicTime - 0.1f)
         {
@@ -96,7 +96,7 @@ public class SyncTestMonitor : MonoBehaviour
             previousMusicTime = -1f;
         }
 
-        // Record player position at specific music times.
+        // Check the player's position at different song times
         while (nextCheckpoint < checkpoints.Length &&
                musicTime >= checkpoints[nextCheckpoint])
         {
@@ -104,8 +104,8 @@ public class SyncTestMonitor : MonoBehaviour
 
             float measuredZ = currentZ;
 
-            // Estimate the position at the exact checkpoint
-            // between the previous and current rendered frames.
+            // Estimate the player's exact position
+            // between the previous and current frame
             if (previousMusicTime >= 0f &&
                 musicTime > previousMusicTime)
             {
@@ -178,7 +178,7 @@ public class SyncTestMonitor : MonoBehaviour
 
     void OnDestroy()
     {
-        // Restore the original frame rate settings.
+        // Restore the old FPS settings
         QualitySettings.vSyncCount = originalVSync;
         Application.targetFrameRate = originalFPS;
     }

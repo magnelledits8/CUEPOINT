@@ -51,13 +51,13 @@ public class CuepointTimeRuler : MonoBehaviour
             songTime += secondsBetweenMarkers
         )
         {
-            // Estimated player position at this song time.
+            // Calculate where the player should be
             float playerZ =
                 playerZAtReferenceTime +
                 (songTime - referenceMusicTime) *
                 playerSpeed;
 
-            // Suggested position for a target's Hit Point.
+            // Calculate where the target should be placed
             float targetZ = playerZ + shootingDistance;
 
             if (showTargetPlacement)

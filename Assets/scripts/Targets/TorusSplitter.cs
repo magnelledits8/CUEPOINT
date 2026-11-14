@@ -24,7 +24,7 @@ public class TorusSplitter : MonoBehaviour
             return;
         }
 
-        // 1. Clean up old attempts automatically
+        // Remove the old torus pieces
         Transform parentTransform = torusObject.transform.parent;
         Transform oldRoot = parentTransform != null ? parentTransform.Find("TorusBits7_Root") : null;
         if (oldRoot != null) DestroyImmediate(oldRoot.gameObject);
@@ -34,7 +34,7 @@ public class TorusSplitter : MonoBehaviour
             if (globalOldRoot != null) DestroyImmediate(globalOldRoot);
         }
 
-        // 2. Create the new clean parent
+        // Create a parent for the new pieces
         GameObject root = new GameObject("TorusBits7_Root");
         if (parentTransform != null) root.transform.SetParent(parentTransform, false);
         root.transform.position = torusObject.transform.position;
@@ -49,34 +49,34 @@ public class TorusSplitter : MonoBehaviour
         int chunksCount = 7;
         float angleStep = 360f / chunksCount;
 
-        // 3. Split the mesh into 7 actual wedge pieces based on angles
+        // Split the torus into 7 pieces
         for (int i = 0; i < chunksCount; i++)
         {
             float startAngle = i * angleStep;
             float endAngle = (i + 1) * angleStep;
 
-            // Create lists for this specific piece's mesh data
+            // Create lists for each piece
             System.Collections.Generic.List<Vector3> newVertices = new System.Collections.Generic.List<Vector3>();
             System.Collections.Generic.List<int> newTriangles = new System.Collections.Generic.List<int>();
             System.Collections.Generic.List<Vector2> newUvs = new System.Collections.Generic.List<Vector2>();
             System.Collections.Generic.List<Vector3> newNormals = new System.Collections.Generic.List<Vector3>();
             System.Collections.Generic.Dictionary<int, int> vertMap = new System.Collections.Generic.Dictionary<int, int>();
 
-            // Loop through all triangles in the original mesh
+            // Go through the triangles in the mesh
             for (int t = 0; t < triangles.Length; t += 3)
             {
                 int i0 = triangles[t];
                 int i1 = triangles[t + 1];
                 int i2 = triangles[t + 2];
 
-                // Calculate the triangle's center in local space
+                // Find the center of the triangle
                 Vector3 center = (vertices[i0] + vertices[i1] + vertices[i2]) / 3f;
 
-                // Calculate the angle around the Y-axis (0 to 360 degrees)
+                // Calculate the angle around the Y axis
                 float angle = Mathf.Atan2(center.x, center.z) * Mathf.Rad2Deg;
                 if (angle < 0) angle += 360f;
 
-                // If the triangle's center is within this slice's angle range, save it!
+                // Check which piece the triangle belongs to
                 if (angle >= startAngle && angle < endAngle)
                 {
                     int[] currentTriangleIndices = new int[3] { i0, i1, i2 };
@@ -95,7 +95,7 @@ public class TorusSplitter : MonoBehaviour
                 }
             }
 
-            // Create a new GameObject for this specific piece
+            // Create a new object for each piece
             if (newTriangles.Count > 0)
             {
                 GameObject bit = new GameObject($"TorusChunk_7_{i + 1}");
@@ -116,7 +116,7 @@ public class TorusSplitter : MonoBehaviour
 
                 mf.sharedMesh = chunkMesh;
 
-                // Create a perfect, convex physics collider based strictly on this piece's shape
+                // Add a collider to the piece
                 MeshCollider meshCol = bit.AddComponent<MeshCollider>();
                 meshCol.sharedMesh = chunkMesh;
                 meshCol.convex = true;

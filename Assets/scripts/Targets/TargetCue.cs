@@ -37,7 +37,7 @@ public class TargetCue : MonoBehaviour
     [SerializeField, Min(0f)]
     private float prewarmSeconds = 0.5f;
 
-    // NEW: The HUD can read the target's scheduled hit time.
+    // Let the HUD read when the target should be hit
     public float ReadyTimeSeconds
     {
         get { return readyTimeSeconds; }
@@ -59,7 +59,7 @@ public class TargetCue : MonoBehaviour
         processed = false;
     }
 
-    // Called automatically by TargetCueManager.
+    // Update the target timing from the manager
     public void Tick(double currentDspTime)
     {
         if (!timelineConfigured || processed)
@@ -73,15 +73,15 @@ public class TargetCue : MonoBehaviour
             return;
         }
 
-        // Exact DSP time when target should be ready.
+        // Get the exact time when the target should be ready
         double readyDspTime =
             musicStartDspTime + readyTimeSeconds;
 
-        // Calculate when movement must begin.
+        // Calculate when the target should start moving
         double movementStartDspTime =
             readyDspTime - movementDuration - chargeDuration;
 
-        // Skip targets that have already missed their activation time.
+        // Skip the target if its ready time has passed
         if (currentDspTime >= readyDspTime)
         {
             processed = true;
@@ -95,14 +95,14 @@ public class TargetCue : MonoBehaviour
             return;
         }
 
-        // Wait until the target is close to its movement time.
+        // Wait until it is almost time to spawn
         if (currentDspTime <
             movementStartDspTime - prewarmSeconds)
         {
             return;
         }
 
-        // Check the player's distance to the target.
+        // Check how far the player is from the target
         float distance = Vector3.Distance(
             playerCamera.position,
             hitPoint.position
@@ -111,20 +111,20 @@ public class TargetCue : MonoBehaviour
         if (distance > activationDistance)
             return;
 
-        // Create the target at its Spawn Point.
+        // Spawn the target at its starting position
         SpiralTarget3DController target = Instantiate(
             targetPrefab,
             spawnPoint.position,
             spawnPoint.rotation
         );
 
-        // Make sure the new target is active.
+        // Make sure the target is active
         if (!target.gameObject.activeSelf)
         {
             target.gameObject.SetActive(true);
         }
 
-        // Start movement and animation with music timing.
+        // Start the movement and animation with the music
         target.BeginScheduledSequence(
             spawnPoint.position,
             spawnPoint.rotation,
@@ -144,35 +144,35 @@ public class TargetCue : MonoBehaviour
         if (spawnPoint == null || hitPoint == null)
             return;
 
-        // Spawn position.
+        // Show the spawn position as gizmos
         Gizmos.color = Color.cyan;
         Gizmos.DrawSphere(
             spawnPoint.position,
             0.12f
         );
 
-        // Hit position.
+        // Show the hit position as gizmos
         Gizmos.color = Color.green;
         Gizmos.DrawSphere(
             hitPoint.position,
             0.12f
         );
 
-        // Movement path.
+        // Show the path between the two positions as gizmos
         Gizmos.color = Color.yellow;
         Gizmos.DrawLine(
             spawnPoint.position,
             hitPoint.position
         );
 
-        // Spawn rotation.
+        // Show the spawn direction
         Gizmos.color = Color.cyan;
         Gizmos.DrawRay(
             spawnPoint.position,
             spawnPoint.forward * 0.5f
         );
 
-        // Hit rotation.
+        // Show the hit direction
         Gizmos.color = Color.green;
         Gizmos.DrawRay(
             hitPoint.position,

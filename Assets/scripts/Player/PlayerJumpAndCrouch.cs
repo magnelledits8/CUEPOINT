@@ -33,7 +33,7 @@ public class PlayerJumpAndCrouch : MonoBehaviour
     private float originalColliderHeight;
     private Vector3 originalColliderCenter;
     private Vector3 originalCameraLocalPosition;
-    private Vector3 targetCameraLocalPosition; // Keeps track of where the camera SHOULD be heading
+    private Vector3 targetCameraLocalPosition; // Save where the camera should move
 
     void Awake()
     {
@@ -56,7 +56,7 @@ public class PlayerJumpAndCrouch : MonoBehaviour
         if (mainCameraTransform != null)
         {
             originalCameraLocalPosition = mainCameraTransform.localPosition;
-            targetCameraLocalPosition = originalCameraLocalPosition; // Start at original position
+            targetCameraLocalPosition = originalCameraLocalPosition; // Start at the normal camera position
         }
     }
 
@@ -74,7 +74,7 @@ public class PlayerJumpAndCrouch : MonoBehaviour
 
         if (isSliding) UpdateSlide();
 
-        // SMOOTH MOVEMENT: Glides the camera smoothly toward the target (either down or up) every frame
+        // Move the camera smoothly when sliding
         if (mainCameraTransform != null)
         {
             mainCameraTransform.localPosition = Vector3.Lerp(
@@ -109,7 +109,7 @@ public class PlayerJumpAndCrouch : MonoBehaviour
         isSliding = true;
         slideTimer = slideDuration;
 
-        // Hitbox shrinks instantly to avoid obstacles immediately upon button press
+        // Make the hitbox smaller when sliding
         if (capsuleCollider != null)
         {
             float targetHeight = originalColliderHeight * 0.5f;
@@ -119,7 +119,7 @@ public class PlayerJumpAndCrouch : MonoBehaviour
             capsuleCollider.center = new Vector3(originalColliderCenter.x, originalColliderCenter.y - heightDifference, originalColliderCenter.z);
         }
 
-        // Set the camera target to be DOWN
+        // Move the camera down during the slide
         targetCameraLocalPosition = new Vector3(
             originalCameraLocalPosition.x,
             originalCameraLocalPosition.y - cameraDropAmount,
@@ -130,7 +130,7 @@ public class PlayerJumpAndCrouch : MonoBehaviour
     void UpdateSlide()
     {
         slideTimer -= Time.deltaTime;
-        // slideSpeed has been removed from here so the player moves entirely via your other script!
+        // Let the running script handle forward movement
 
         if (slideTimer <= 0f)
         {
@@ -142,14 +142,14 @@ public class PlayerJumpAndCrouch : MonoBehaviour
     {
         isSliding = false;
 
-        // Reset hitbox
+        // Return the hitbox to normal
         if (capsuleCollider != null)
         {
             capsuleCollider.height = originalColliderHeight;
             capsuleCollider.center = originalColliderCenter;
         }
 
-        // Set the camera target to go UP again
+        // Move the camera back up after sliding
         targetCameraLocalPosition = originalCameraLocalPosition;
 
         if (rb != null)

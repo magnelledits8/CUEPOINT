@@ -7,21 +7,21 @@ public class WinScreenController : MonoBehaviour
     [Header("Scenes")]
     public string menuScene = "menu";
 
-    // Remembers which level was completed.
+    // Save the last completed level
     public static string lastCompletedLevel = "Level1";
 
     private void Start()
     {
-        // Restore normal game time and audio.
+        // Reset the game time and sound
         Time.timeScale = 1f;
         AudioListener.pause = false;
 
-        // Show cursor for the results menu.
+        // Show the mouse cursor in the win screen
         Cursor.lockState = CursorLockMode.None;
         Cursor.visible = true;
     }
 
-    // RETRY - Restart the completed level.
+    // Restart the level
     public void Retry()
     {
         Time.timeScale = 1f;
@@ -30,7 +30,7 @@ public class WinScreenController : MonoBehaviour
         SceneManager.LoadScene(lastCompletedLevel);
     }
 
-    // MAIN MENU - Return to the menu scene.
+    // Go back to the main menu
     public void MainMenu()
     {
         Time.timeScale = 1f;

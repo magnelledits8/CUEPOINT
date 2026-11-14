@@ -1,13 +1,13 @@
 using UnityEngine;
-using UnityEngine.SceneManagement; // Required to reload the scene
+using UnityEngine.SceneManagement; // Used to restart the level
 
 public class DeathZone : MonoBehaviour
 {
-    // This function runs automatically when something touches our invisible trigger box
+    // Check when something enters the death zone
     private void OnTriggerEnter(Collider other)
     {
-        // Check if the object that fell down is actually the player
-        // (Make sure your player has the "Player" tag at the top of the Inspector!)
+        // Check if the player entered the zone
+        // The player needs the Player tag
         if (other.CompareTag("Player"))
         {
             RestartLevel();
@@ -16,10 +16,10 @@ public class DeathZone : MonoBehaviour
 
     private void RestartLevel()
     {
-        // Gets the name of the current active scene
+        // Get the current scene name
         string currentSceneName = SceneManager.GetActiveScene().name;
 
-        // Reloads the entire scene from second zero (restarts gameplay and music)
+        // Restart the level and music
         SceneManager.LoadScene(currentSceneName);
     }
 }

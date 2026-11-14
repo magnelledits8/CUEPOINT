@@ -15,7 +15,7 @@ public class PlayerHealth : MonoBehaviour
         if (isRestarting)
             return;
 
-        // Restart the entire level when pressing R
+        // Restart the level when pressing R
         if (Keyboard.current != null &&
             Keyboard.current.rKey.wasPressedThisFrame)
         {
@@ -23,7 +23,7 @@ public class PlayerHealth : MonoBehaviour
             return;
         }
 
-        // Restart the entire level when falling
+        // Restart the level if the player falls
         if (transform.position.y < fallThreshold)
         {
             Respawn();

@@ -103,6 +103,7 @@
     <Compile Include="Assets\scripts\Player\Unused\capsule movement.cs" />
     <Compile Include="Assets\scripts\IntroController.cs" />
     <Compile Include="Assets\scripts\PauseMenuController.cs" />
+    <Compile Include="Assets\scripts\Targets\HitSoundListener.cs" />
     <Compile Include="Assets\TextMesh Pro\Examples &amp; Extras\Scripts\TMP_TextInfoDebugTool.cs" />
     <Compile Include="Assets\scripts\Player\PlayerShooting.cs" />
     <Compile Include="Assets\TextMesh Pro\Examples &amp; Extras\Scripts\VertexShakeA.cs" />

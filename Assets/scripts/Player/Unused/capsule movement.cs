@@ -80,13 +80,13 @@ public class CapsuleMovement : MonoBehaviour
         targetPositionX = transform.position.x;
         targetPositionZ = transform.position.z;
 
-        // Start with a speed of 0 until the countdown triggers us
+        // Keep the player still until the countdown starts
         currentSpeed = 0f;
         hasStartedRunning = false;
         isInStartSequence = false;
     }
 
-    // This function is called from inside the MatchStartSequence script when 1 second remains!
+    // Start the player movement during the countdown
     public void TriggerStartSequence()
     {
         if (!hasStartedRunning && !isInStartSequence)
@@ -99,32 +99,32 @@ public class CapsuleMovement : MonoBehaviour
     {
         isInStartSequence = true;
 
-        // 1. Take a small step forward
+        // Take a small step forward
         float stepTimer = 0f;
-        float stepDuration = 0.2f; // How long the small step lasts
+        float stepDuration = 0.2f; // Time for the first step
         while (stepTimer < stepDuration)
         {
             stepTimer += Time.deltaTime;
-            targetPositionZ += 1.5f * Time.deltaTime; // Slower speed for the small step
+            targetPositionZ += 1.5f * Time.deltaTime; // Move forward slowly
             yield return null;
         }
 
-        // 2. Jump automatically
+        // Make the player jump in intro
         isGrounded = Physics.Raycast(transform.position, Vector3.down, (transform.localScale.y * 1.1f));
         Jump();
 
-        // Wait until the player has landed on the ground again
-        yield return new Vector3(0, 0, 0); // Minor rule break for frame-waiting
+        // Wait until the player lands
+        yield return new Vector3(0, 0, 0); // Wait for the next frame
         while (!isGrounded)
         {
             isGrounded = Physics.Raycast(transform.position, Vector3.down, (transform.localScale.y * 1.1f));
             yield return null;
         }
 
-        // 3. Delay after landing
+        // Wait a little after landing
         yield return new WaitForSeconds(postJumpDelay);
 
-        // 4. Start actual running and begin ramping up speed
+        // Start running and slowly increase the speed
         isInStartSequence = false;
         hasStartedRunning = true;
         speedRampTimer = 0f;
@@ -144,10 +144,10 @@ public class CapsuleMovement : MonoBehaviour
 
         isGrounded = Physics.Raycast(transform.position, Vector3.down, (transform.localScale.y * 1.1f));
 
-        // Block all controls (lane changes, jumps, slides) until the start sequence is fully finished
+        // Disable player controls during the intro
         if (!hasStartedRunning)
         {
-            // Update positions during the cinematic start so the X-axis and Z-axis are still applied
+            // Update the player's position during the intro
             Vector3 startPos = transform.position;
             startPos.x = Mathf.Lerp(startPos.x, targetPositionX, laneChangeSpeed * Time.deltaTime);
             startPos.z = targetPositionZ;
@@ -155,7 +155,7 @@ public class CapsuleMovement : MonoBehaviour
             return;
         }
 
-        // --- LANE CONTROLS (A & D) ---
+        // Move between the three lanes with A and D
         if (Keyboard.current.aKey.wasPressedThisFrame && !isSliding)
         {
             if (currentLane > -1) currentLane--;
@@ -167,12 +167,12 @@ public class CapsuleMovement : MonoBehaviour
 
         targetPositionX = spawnPosition.x + (currentLane * laneDistance);
 
-        // --- JUMP BUFFER ---
+        // Save the jump input for a short time
         if (jumpBufferTimer > 0f) jumpBufferTimer -= Time.deltaTime;
         if (Keyboard.current.spaceKey.wasPressedThisFrame) jumpBufferTimer = jumpBufferTime;
         if (jumpBufferTimer > 0f && isGrounded) Jump();
 
-        // --- SLIDE ---
+        // Slide when pressing Left Ctrl
         if (Keyboard.current.leftCtrlKey.wasPressedThisFrame && isGrounded && !isSliding) StartSlide();
 
         if (isSliding)
@@ -181,13 +181,13 @@ public class CapsuleMovement : MonoBehaviour
             return;
         }
 
-        // --- SPEED RAMP & AUTORUN ---
+        // Control the running speed
         float maxSpeed = Keyboard.current.leftShiftKey.isPressed ? sprintSpeed : moveSpeed;
 
         if (speedRampTimer < speedRampDuration)
         {
             speedRampTimer += Time.deltaTime;
-            // Ramped value from 0 to max speed
+            // Increase the speed from 0 to max speed
             currentSpeed = Mathf.Lerp(0f, maxSpeed, speedRampTimer / speedRampDuration);
         }
         else
@@ -195,10 +195,10 @@ public class CapsuleMovement : MonoBehaviour
             currentSpeed = maxSpeed;
         }
 
-        // The player now runs forward COMPLETELY AUTOMATICALLY on the global Z-axis
+        // Move the player forward automatically
         targetPositionZ += currentSpeed * Time.deltaTime;
 
-        // --- APPLY SMOOTH MOVEMENT ---
+        // Move smoothly between lanes
         Vector3 newPos = transform.position;
         newPos.x = Mathf.Lerp(newPos.x, targetPositionX, laneChangeSpeed * Time.deltaTime);
         newPos.z = targetPositionZ;
@@ -222,7 +222,7 @@ public class CapsuleMovement : MonoBehaviour
 
         Vector3 newVelocity = new Vector3(rb.linearVelocity.x, jumpVelocity, rb.linearVelocity.z);
 
-        // If we are moving forward, add our boost
+        // Add extra forward speed when jumping
         if (hasStartedRunning || isInStartSequence)
         {
             newVelocity.z += jumpForwardBoost;
@@ -286,12 +286,12 @@ public class CapsuleMovement : MonoBehaviour
             rb.angularVelocity = Vector3.zero;
         }
 
-        // Reset start values upon respawn
+        // Reset the player's speed and start settings
         currentSpeed = 0f;
         hasStartedRunning = false;
         isInStartSequence = false;
 
-        // Restart the sequence (or trigger it based on your needs)
+        // Start the intro sequence again
         TriggerStartSequence();
     }
 }

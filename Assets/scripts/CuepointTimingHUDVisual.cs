@@ -113,7 +113,7 @@ public class CuepointTimingHUDVisual : MonoBehaviour
             return;
         }
 
-        // Same DSP clock as the targets and music.
+        // Use the same music time as the targets
         double songTime =
             AudioSettings.dspTime -
             targetCueManager.MusicStartDspTime;
@@ -135,7 +135,7 @@ public class CuepointTimingHUDVisual : MonoBehaviour
         double endDuration =
             perfectHoldSeconds + fadeOutSeconds;
 
-        // Each target gets its own timing pulse.
+        // Give each target its own timing animation
         foreach (TargetCue cue in cues)
         {
             if (cue == null)
@@ -169,7 +169,7 @@ public class CuepointTimingHUDVisual : MonoBehaviour
             );
         }
 
-        // Hide overlays that have completed.
+        // Hide animations that are finished
         foreach (Pulse pulse in pulses)
         {
             if (!pulse.usedThisFrame)
@@ -183,14 +183,14 @@ public class CuepointTimingHUDVisual : MonoBehaviour
 
     private Pulse GetPulse(TargetCue cue)
     {
-        // Reuse the visual for an existing target.
+        // Use the same animation for an existing target
         foreach (Pulse pulse in pulses)
         {
             if (pulse.cue == cue)
                 return pulse;
         }
 
-        // Reuse an available visual.
+        // Use an available animation
         foreach (Pulse pulse in pulses)
         {
             if (pulse.cue == null)
@@ -200,7 +200,7 @@ public class CuepointTimingHUDVisual : MonoBehaviour
             }
         }
 
-        // Create two images for smooth crossfading.
+        // Create two images for the fade effect
         Pulse newPulse = new Pulse();
 
         newPulse.cue = cue;
@@ -263,7 +263,7 @@ public class CuepointTimingHUDVisual : MonoBehaviour
 
         float alpha = overlayOpacity;
 
-        // STAGE 1: SLOW BUILD-UP
+        // First part of the animation
         if (songTime < finalStartTime)
         {
             float progress = Mathf.Clamp01(
@@ -285,7 +285,7 @@ public class CuepointTimingHUDVisual : MonoBehaviour
                 );
             }
 
-            // Images 02 -> 03 -> 04.
+            // Slowly change between images 02 to 04
             float framePosition = progress * 2f;
 
             SetBlend(
@@ -297,7 +297,7 @@ public class CuepointTimingHUDVisual : MonoBehaviour
             return;
         }
 
-        // STAGE 2: FAST FINAL MOVEMENT
+        // Faster animation before perfect timing
         if (songTime < readyTime)
         {
             float progress = Mathf.Clamp01(
@@ -307,7 +307,7 @@ public class CuepointTimingHUDVisual : MonoBehaviour
                 )
             );
 
-            // Images 04 -> 05 -> 06 -> 07 -> 08.
+            // Change between images 04 to 08
             float framePosition =
                 2f + progress * 4f;
 
@@ -320,13 +320,13 @@ public class CuepointTimingHUDVisual : MonoBehaviour
             return;
         }
 
-        // STAGE 3: PERFECT
+        // Show the perfect timing image
         float afterReady =
             (float)(songTime - readyTime);
 
         float perfectAlpha = alpha;
 
-        // Keep Perfect briefly visible.
+        // Keep the perfect image visible for a moment
         if (afterReady > perfectHoldSeconds)
         {
             float fadeProgress = Mathf.Clamp01(
@@ -350,7 +350,7 @@ public class CuepointTimingHUDVisual : MonoBehaviour
         );
     }
 
-    // Smoothly blend between neighboring images.
+    // Fade smoothly between the images
     private void SetBlend(
         Pulse pulse,
         float framePosition,

@@ -29,7 +29,7 @@ public class MusicTimerHUD : MonoBehaviour
 
         int currentSample = Mathf.Clamp(musicSource.timeSamples, 0, totalSamples);
 
-        // When a non-looping track ends, some AudioSources reset timeSamples to zero.
+        // Keep the timer at the end when the music stops
         if (musicHasPlayed && !musicSource.isPlaying && currentSample == 0)
             currentSample = totalSamples;
 

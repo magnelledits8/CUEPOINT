@@ -100,7 +100,7 @@ public class SpiralTarget3DController : MonoBehaviour
             BeginSequence();
     }
 
-    // TARGET CUE MODE
+    // Start the target using the song timing with extra timing settings
     public void BeginScheduledSequence(
         Vector3 startPos,
         Quaternion startRot,
@@ -228,7 +228,7 @@ public class SpiralTarget3DController : MonoBehaviour
         yield return WaitForMissDeadline();
     }
 
-    // MANUAL MODE
+    // Start the target without the song timing
     public void BeginSequence()
     {
         startedFromCue = false;
@@ -446,7 +446,7 @@ public class SpiralTarget3DController : MonoBehaviour
             HitAnimationRoutine()
         );
 
-        // Existing scoring system.
+        // Add points to the score
         if (ScoreHUD.Instance != null)
         {
             ScoreHUD.Instance.RegisterHit(awardedPoints);
@@ -534,7 +534,7 @@ public class SpiralTarget3DController : MonoBehaviour
         state = TargetState.Finished;
     }
 
-    // ORIGINAL RANDOM TORUS EXPLOSION
+    // Break the outer ring into pieces when hit
     private void ExplodeOuterRing()
     {
         if (wholeRingVisual != null &&

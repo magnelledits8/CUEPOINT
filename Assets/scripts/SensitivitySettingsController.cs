@@ -26,7 +26,7 @@ public class SensitivitySettingsController : MonoBehaviour
 
     private void Awake()
     {
-        // Settings should be hidden when the scene starts.
+        // Hide settings when starting
         if (settingsPanel != null)
         {
             settingsPanel.SetActive(false);
@@ -35,7 +35,7 @@ public class SensitivitySettingsController : MonoBehaviour
 
     private void Start()
     {
-        // Load previously saved sensitivity.
+        // Load the saved sensitivity
         float savedSensitivity = PlayerPrefs.GetFloat(
             SensitivityKey,
             DefaultSensitivity
@@ -43,19 +43,19 @@ public class SensitivitySettingsController : MonoBehaviour
 
         savedSensitivity = Mathf.Clamp01(savedSensitivity);
 
-        // Find the gameplay camera if no reference was assigned.
+        // Find the player camera if needed
         if (mouseLook == null)
         {
             mouseLook = FindFirstObjectByType<MouseLook>();
         }
 
-        // Apply sensitivity in the current scene.
+        // Set the mouse sensitivity
         if (mouseLook != null)
         {
             mouseLook.sensitivity = savedSensitivity;
         }
 
-        // Configure the slider.
+        // Set up the sensitivity slider
         if (sensitivitySlider != null)
         {
             sensitivitySlider.minValue = 0f;
@@ -86,11 +86,11 @@ public class SensitivitySettingsController : MonoBehaviour
 
     public void ChangeSensitivity(float sliderValue)
     {
-        // Convert 40/100 into sensitivity 0.4.
+        // Change the slider value into sensitivity
         float newSensitivity =
             Mathf.Clamp01(sliderValue / 100f);
 
-        // Save the value for both scenes.
+        // Save the sensitivity for both scenes
         PlayerPrefs.SetFloat(
             SensitivityKey,
             newSensitivity
@@ -103,7 +103,7 @@ public class SensitivitySettingsController : MonoBehaviour
             mouseLook = FindFirstObjectByType<MouseLook>();
         }
 
-        // Apply immediately if the player camera exists.
+        // Update the mouse sensitivity
         if (mouseLook != null)
         {
             mouseLook.sensitivity = newSensitivity;
@@ -121,15 +121,15 @@ public class SensitivitySettingsController : MonoBehaviour
 
     public void OpenSettings()
     {
-        // In Level1, let the existing PauseMenuController
-        // handle switching between Pause and Settings.
+        // Use the pause menu settings
+        // when playing the level
         if (pauseMenuController != null)
         {
             pauseMenuController.OpenSettings();
             return;
         }
 
-        // In Main Menu, hide the menu buttons.
+        // Hide the main menu buttons
         if (mainMenuButtons != null)
         {
             mainMenuButtons.alpha = 0f;
@@ -145,17 +145,17 @@ public class SensitivitySettingsController : MonoBehaviour
 
     public void CloseSettings()
     {
-        // Save when closing.
+        // Save the settings when closing
         PlayerPrefs.Save();
 
-        // Return to the pause menu in Level1.
+        // Go back to the pause menu
         if (pauseMenuController != null)
         {
             pauseMenuController.BackFromSettings();
             return;
         }
 
-        // Return to the main menu.
+        // Go back to the main menu
         if (settingsPanel != null)
         {
             settingsPanel.SetActive(false);

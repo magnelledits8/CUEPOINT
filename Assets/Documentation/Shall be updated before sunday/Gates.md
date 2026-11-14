@@ -40,8 +40,9 @@ Required
 Quick ones (still needed, rough is fine, a few minutes each)
 
 - [x] Content scope: a short list of counts (Completed)
-- [x] Roadmap: 4 lines, one per stage, each with a date  
+- [x] Roadmap: 4 lines, one per stage, each with a date   
 - [x] Screen flow: a phone photo of a paper sketch of your screens (start, HUD, pause, win and/or lose)
+[[Assets/Documentation/Shall be updated before sunday/ScreenFlow HUD.png]]
 
 
 ### Content Scope
@@ -78,10 +79,11 @@ Documents
 
 In Unity
 
-- [ ] Every Must feature is in (rough is fine)  
-- [ ] No new features after today
+- [x] Every Must feature is in (rough is fine)  
+- [x] No new features after today
 
-Peer review - reviewed by: ________   Go / Not yet: ________ What they said, in one line:
+Peer review - reviewed by: Hanna   Go / Not yet: Not yet
+What they said, in one line: Really fast movement
 
 ---
 
@@ -89,36 +91,38 @@ Peer review - reviewed by: ________   Go / Not yet: ________ What they said, in 
 
 Documents
 
-- [ ] DesignLog.md updated  
-- [ ] Bug list: what's broken, and which ones I'll fix
+- [x] DesignLog.md updated  
+- [x] Bug list: what's broken, and which ones I'll fix
 
 In Unity
 
-- [ ] Playable from start to finish  
-- [ ] Start screen, HUD, pause, and win and/or lose screen all work  
-- [ ] A Windows build runs
+- [x] Playable from start to finish  
+- [x] Start screen, HUD, pause, and win and/or lose screen all work  
+- [x] A Windows build runs
 
-Peer review - reviewed by: ________   Go / Not yet: ________ What they said, in one line:
+Peer review - reviewed by: Ellen   Go / Not yet: Go 
+What they said, in one line: Wow, this is crazy.
 
 ---
 
 ## 5. Closing - Thursday Nov 12 and Sunday Nov 15
 
-- [ ] Safety build: link sent to Brian on Teams, Thursday morning  
-- [ ] Playtest record (`PlaytestRecord.md`): at least 3 testers  
-- [ ] Post mortem (`PostMortem.md`), handed in at the playtest  
-- [ ] Final build (optional improvements): link sent by Sunday  
-- [ ] Going for VG? `VGClaim.md` committed, and a Teams message to Brian, by Sunday
+- [x] Safety build: link sent to Brian on Teams, Thursday morning  
+- [x] Playtest record (`PlaytestRecord.md`): at least 3 testers  
+- [x] Post mortem (`PostMortem.md`), handed in at the playtest  
+- [x] Final build (optional improvements): link sent by Sunday  
+- [x] Going for VG? `VGClaim.md` committed, and a Teams message to Brian, by Sunday
 
 ---
 
 ## Time Log
 
-| Date | Activity | Description | Time |
-| :--- | :--- | :--- | :--- |
-| 2026-10-23 | **Intro & Music** | Music creation in Suno.com (lyrics/prompts), video creation of my main intro to the main menu. | 8 hours |
-| 2026-10-25 | **Shooting, Hazards & Torus Split** | Built the camera raycast shooting script, set up the death zone trigger under the map, and created the tool to split the torus into 7 pieces. | 6 hours |
-| 2026-10-27 | **Player Movement & Intro Intro** | Programmed basic movement, jumping, and sliding controls. Started working on the first phase of the player intro animation. | 6 hours |
-| 2026-10-28 | **Physics Polish & DeltaTime** | Adjusted player gravity and ground-snapping slides. Updated movement frames to use Time.deltaTime to ensure consistent game speed across different computer hardware. | 4 hours |
-| 2026-10-31 | **Gun & Animations Complete** | Finished the final phase of the player intro animation. Added the weapon mesh along with hand animations, a muzzle flash effect, and implemented a weapon recoil and camera bopping script. | 8 hours |
-| | **Total** | | **32 hours** |
+| Date       | Activity                            | Description                                                                                                                                                                                 | Time         |
+| :--------- | :---------------------------------- | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | :----------- |
+| 2026-10-23 | **Intro & Music**                   | Music creation in Suno.com (lyrics/prompts), video creation of my main intro to the main menu.                                                                                              | 8 hours      |
+| 2026-10-25 | **Shooting, Hazards & Torus Split** | Built the camera raycast shooting script, set up the death zone trigger under the map, and created the tool to split the torus into 7 pieces.                                               | 6 hours      |
+| 2026-10-27 | **Player Movement & Intro Intro**   | Programmed basic movement, jumping, and sliding controls. Started working on the first phase of the player intro animation.                                                                 | 6 hours      |
+| 2026-10-28 | **Physics Polish & DeltaTime**      | Adjusted player gravity and ground-snapping slides. Updated movement frames to use Time.deltaTime to ensure consistent game speed across different computer hardware.                       | 4 hours      |
+| 2026-10-31 | **Gun & Animations Complete**       | Finished the final phase of the player intro animation. Added the weapon mesh along with hand animations, a muzzle flash effect, and implemented a weapon recoil and camera bopping script. | 8 hours      |
+|            | **Total**                           |                                                                                                                                                                                             | **32 hours** |
+|            |                                     | Rest of the time log in DesignLog                                                                                                                                                           |              |

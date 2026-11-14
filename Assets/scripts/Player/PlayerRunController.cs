@@ -15,13 +15,13 @@ public class PlayerRunController : MonoBehaviour
 
     [Header("Position-Based Intro Trigger (PRO)")]
     [Tooltip("At which exact Z-position on the track should the intro end and the script take over?")]
-    public float triggerGameplayAtZ = 20.16f; // Set to your exact value from the image!
+    public float triggerGameplayAtZ = 20.16f; // Position where the intro ends
 
     [Header("Smooth Acceleration AFTER Intro")]
     [Tooltip("What speed do you want the script to start at in the exact frame it takes over?")]
-    public float animationEndSpeed = 22.2f; // Set to your value from the image!
+    public float animationEndSpeed = 22.2f; // Speed when the intro finishes
     [Tooltip("How many seconds should it take for the script and tempo to reach max speed (35)?")]
-    public float rampDuration = 0.5f; // Optimized value for a fast and snappy flow!
+    public float rampDuration = 0.5f; // Time to reach full speed
 
     private float accelerationTimer = 0f;
     private float targetPositionX;
@@ -49,7 +49,7 @@ public class PlayerRunController : MonoBehaviour
     public void StartIntroSequence()
     {
         ResetMovement();
-        hasStartedRunning = false; // Code does not move the player during the intro
+        hasStartedRunning = false; // Let the animation control the player
         isInStartSequence = true;
         isRampingSpeed = false;
         currentSpeed = 0f;
@@ -57,35 +57,35 @@ public class PlayerRunController : MonoBehaviour
         if (animator != null)
         {
             animator.enabled = true;
-            animator.Play("IntroSequence"); // Plays your intro animation (step -> jump -> landing)
+            animator.Play("IntroSequence"); // Play the intro animation
         }
     }
 
     void Update()
     {
-        // 1. INTRO PHASE: Checks every frame if your animation has moved the player to Z: 20.16
+        // Check if the player has reached the gameplay position
         if (isInStartSequence && !hasStartedRunning)
         {
             if (transform.position.z >= triggerGameplayAtZ)
             {
                 SwitchToGameplay();
             }
-            return; // Let the animation handle everything until we cross the finish line
+            return; // Keep using the animation until the intro ends
         }
 
         if (!hasStartedRunning) return;
 
         float lerpFactor = 1f - Mathf.Exp(-laneChangeSpeed * Time.deltaTime);
 
-        // --- REGULAR GAMEPLAY CONTROLS (A & D) ---
-        // Automatically activated here as soon as the intro is over!
+        // Move between the three lanes with A and D
+        // Enable controls after the intro
         if (Keyboard.current.aKey.wasPressedThisFrame && currentLane > -1) currentLane--;
         if (Keyboard.current.dKey.wasPressedThisFrame && currentLane < 1) currentLane++;
 
         targetPositionX = spawnPosition.x + (currentLane * laneDistance);
         float maxSpeed = Keyboard.current.leftShiftKey.isPressed ? sprintSpeed : moveSpeed;
 
-        // --- SMOOTH SPEED ACCELERATION (RAMP UP) ---
+        // Slowly increase the running speed
         if (isRampingSpeed)
         {
             accelerationTimer += Time.deltaTime;
@@ -96,7 +96,7 @@ public class PlayerRunController : MonoBehaviour
 
             if (progress >= 1f)
             {
-                isRampingSpeed = false; // Ramp finished! Player is now up to speed (35)
+                isRampingSpeed = false; // Player has reached full speed
             }
         }
         else
@@ -104,7 +104,7 @@ public class PlayerRunController : MonoBehaviour
             currentSpeed = maxSpeed;
         }
 
-        // Move the player straight forward on the Z-axis via code
+        // Move the player forward on the Z axis
         targetPositionZ += currentSpeed * Time.deltaTime;
 
         Vector3 newPos = transform.position;
@@ -119,13 +119,13 @@ public class PlayerRunController : MonoBehaviour
         hasStartedRunning = true;
         isRampingSpeed = true;
 
-        // Lock the script's target lane to the exact coordinate where your animation stopped
+        // Continue moving from where the intro ended
         targetPositionZ = transform.position.z;
         accelerationTimer = 0f;
         currentSpeed = animationEndSpeed;
 
-        // CLEAN TRANSITION: We disable the Animator completely here.
-        // Since the code takes over at the exact same coordinate and continues forward, it becomes seamless!
+        // Turn off the Animator when gameplay starts
+        // Let the script take over the movement
         if (animator != null)
         {
             animator.enabled = false;

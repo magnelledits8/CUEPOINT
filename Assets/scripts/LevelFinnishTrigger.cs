@@ -14,7 +14,7 @@ public class LevelFinishTrigger : MonoBehaviour
         if (hasFinished)
             return;
 
-        // Only the player can finish the level.
+        // Check if the player reached the finish
         bool isPlayer = other.CompareTag("Player") ||
                         other.transform.root.CompareTag("Player");
 
@@ -31,17 +31,17 @@ public class LevelFinishTrigger : MonoBehaviour
 
         hasFinished = true;
 
-        // Remember the completed level for Retry.
+        // Save which level was completed
         WinScreenController.lastCompletedLevel =
             SceneManager.GetActiveScene().name;
 
         Debug.Log("CUEPOINT: Level completed!");
 
-        // Restore normal game time and audio.
+        // Reset the game time and sound
         Time.timeScale = 1f;
         AudioListener.pause = false;
 
-        // Open WinningScreen.
+        // Load the winning screen
         SceneManager.LoadScene(winSceneName);
     }
 }

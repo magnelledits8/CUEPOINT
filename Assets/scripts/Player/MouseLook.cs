@@ -32,15 +32,15 @@ public class MouseLook : MonoBehaviour
 
     void Update()
     {
-        // Do not rotate the camera when the game is paused.
+        // Stop camera movement when paused
         if (Time.timeScale == 0f)
         {
             wasPaused = true;
             return;
         }
 
-        // Ignore mouse movement on the first frame after
-        // closing the pause menu to prevent camera jumping.
+        // Ignore mouse movement right after unpausing
+        // This stops the camera from jumping
         if (wasPaused)
         {
             wasPaused = false;
@@ -57,14 +57,14 @@ public class MouseLook : MonoBehaviour
         float mouseX = mouseDelta.x * sensitivity;
         float mouseY = mouseDelta.y * sensitivity;
 
-        // Vertical rotation with the original limits.
+        // Move the camera up and down
         xRotation -= mouseY;
         xRotation = Mathf.Clamp(xRotation, -89f, 89f);
 
-        // Horizontal rotation.
+        // Move the camera left and right
         yRotation += mouseX;
 
-        // Rotate only the camera, not the player body.
+        // Rotate the camera without moving the player
         transform.localRotation =
             Quaternion.Euler(xRotation, yRotation, 0f);
     }

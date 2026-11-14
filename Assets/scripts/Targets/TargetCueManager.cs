@@ -11,19 +11,19 @@ public class TargetCueManager : MonoBehaviour
     private bool timelineRunning;
     private double musicStartDspTime;
 
-    // Allows the Timing HUD to check if the timeline is running.
+    // Let the HUD check if the timeline is running
     public bool TimelineRunning
     {
         get { return timelineRunning; }
     }
 
-    // Allows the Timing HUD to read all target cues.
+    // Give the HUD access to all target cues
     public TargetCue[] Cues
     {
         get { return cues; }
     }
 
-    // Allows the Timing HUD to use the same music start time.
+    // Let the HUD use the music start time
     public double MusicStartDspTime
     {
         get { return musicStartDspTime; }
@@ -38,7 +38,7 @@ public class TargetCueManager : MonoBehaviour
         }
     }
 
-    // Called by DelayedMusicStart with the scheduled DSP music time.
+    // Start the target timeline with the music
     public void BeginTimeline(double startDspTime)
     {
         if (playerCamera == null)
@@ -59,7 +59,7 @@ public class TargetCueManager : MonoBehaviour
             return;
         }
 
-        // Store the exact music start time for targets and HUD.
+        // Save the music start time
         musicStartDspTime = startDspTime;
 
         for (int i = 0; i < cues.Length; i++)
@@ -76,7 +76,7 @@ public class TargetCueManager : MonoBehaviour
         timelineRunning = true;
     }
 
-    // Test method.
+    // Test the timeline with a one second delay
     public void BeginTimelineAfterOneSecond()
     {
         BeginTimeline(AudioSettings.dspTime + 1.0);

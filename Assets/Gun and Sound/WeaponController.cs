@@ -90,13 +90,13 @@ public class WeaponController : MonoBehaviour
 
     void Update()
     {
-        // Shooting is only allowed while the game is active
-        // and the cursor is locked to the gameplay camera.
+        // Only allow shooting when playing
+        // Don't shoot when the game is paused
         bool canShoot =
             Time.timeScale > 0f &&
             Cursor.lockState == CursorLockMode.Locked;
 
-        // SHOOTING
+        // Left click to shoot
         if (canShoot &&
             Mouse.current != null &&
             Mouse.current.leftButton.wasPressedThisFrame &&
@@ -105,7 +105,7 @@ public class WeaponController : MonoBehaviour
             nextTimeToFire = Time.time + fireRate;
             currentRecoil = recoilAngle;
 
-            // PLAY SOUND
+            // Play the shooting sound
             if (audioSource != null && gunFireSound != null)
             {
                 if (soundDelay > 0f)
@@ -118,7 +118,7 @@ public class WeaponController : MonoBehaviour
                 }
             }
 
-            // ACTIVATE MUZZLE FLASH
+            // Show the flash when shooting
             if (myMuzzleFlash != null)
             {
                 myMuzzleFlash.SetActive(true);
@@ -132,7 +132,7 @@ public class WeaponController : MonoBehaviour
                 flashTimer = Time.time + flashDuration;
             }
 
-            // TURN ON GLOW
+            // Turn on the gun light
             if (muzzleLight != null)
             {
                 muzzleLight.intensity = maxLightIntensity;
@@ -141,7 +141,7 @@ public class WeaponController : MonoBehaviour
             SpawnBulletTracer();
         }
 
-        // Hide muzzle flash after its duration.
+        // Hide the flash after shooting
         if (myMuzzleFlash != null &&
             myMuzzleFlash.activeSelf &&
             Time.time >= flashTimer)
@@ -149,7 +149,7 @@ public class WeaponController : MonoBehaviour
             myMuzzleFlash.SetActive(false);
         }
 
-        // Cool down muzzle light.
+        // Fade out the light
         if (muzzleLight != null && muzzleLight.intensity > 0f)
         {
             muzzleLight.intensity = Mathf.MoveTowards(
@@ -159,14 +159,14 @@ public class WeaponController : MonoBehaviour
             );
         }
 
-        // Return recoil.
+        // Move the gun back after shooting
         currentRecoil = Mathf.Lerp(
             currentRecoil,
             0f,
             Time.deltaTime * returnSpeed
         );
 
-        // Idle bobbing.
+        // Small gun movement when not shooting
         timer += Time.deltaTime * bobSpeed;
 
         float bobX = Mathf.Sin(timer) * bobAmountX;

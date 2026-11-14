@@ -11,18 +11,18 @@ public class SlopeForceTrigger : MonoBehaviour
 
     private void OnTriggerStay(Collider other)
     {
-        // Check if the object entering the slope is the player
+        // Check if the player is on the slope
         if (other.CompareTag("Player"))
         {
             Rigidbody playerRb = other.GetComponent<Rigidbody>();
 
             if (playerRb != null)
             {
-                // We apply a direct downward velocity or force to lock the player to the slope.
-                // This counters the forward air-time momentum from the running script.
+                // Keep the player moving down the slope
+                // Stop the player from bouncing into the air
                 Vector3 currentVelocity = playerRb.linearVelocity;
 
-                // Push the player firmly downward along the Y axis
+                // Push the player down on the Y axis
                 playerRb.linearVelocity = new Vector3(currentVelocity.x, -downForce, currentVelocity.z);
             }
         }

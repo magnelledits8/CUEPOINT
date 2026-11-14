@@ -6,6 +6,8 @@ public class ScoreHUD : MonoBehaviour
 {
     public static ScoreHUD Instance { get; private set; }
 
+    public static event System.Action<int> OnHitRegistered;
+
     [Header("Text in Canvas")]
     [SerializeField] private TMP_Text scoreText;
     [SerializeField] private TMP_Text comboText;
@@ -33,19 +35,21 @@ public class ScoreHUD : MonoBehaviour
         RefreshText();
     }
 
-    // Keeps compatibility with scripts using RegisterHit().
+    // Let other scripts register a normal hit
     public void RegisterHit()
     {
         RegisterHit(pointsPerHit);
     }
 
-    // NEW: Different points for Early, Perfect and Late.
+    // Give points based on the shot timing
     public void RegisterHit(int points)
     {
         score += Mathf.Max(0, points);
         combo++;
 
         RefreshText();
+
+        OnHitRegistered?.Invoke(points);
     }
 
     public void RegisterMiss()
@@ -61,7 +65,7 @@ public class ScoreHUD : MonoBehaviour
             scoreText.text = score.ToString("D6");
         }
 
-        // Your Canvas already contains the separate "COMBO x".
+        // Update the combo number on the screen
         if (comboText != null)
         {
             comboText.text = combo.ToString();

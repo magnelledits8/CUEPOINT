@@ -13,11 +13,11 @@ public class ReturnMenuController : MonoBehaviour
 
     private void Start()
     {
-        // Make sure the game is no longer paused.
+        // Make sure the game is not paused
         Time.timeScale = 1f;
         AudioListener.pause = false;
 
-        // Show and unlock the mouse cursor.
+        // Show the mouse cursor
         Cursor.lockState = CursorLockMode.None;
         Cursor.visible = true;
 
@@ -30,7 +30,7 @@ public class ReturnMenuController : MonoBehaviour
             return;
         }
 
-        // Start with invisible, non-clickable buttons.
+        // Hide the buttons before the fade starts
         buttonsCanvasGroup.alpha = 0f;
         buttonsCanvasGroup.interactable = false;
         buttonsCanvasGroup.blocksRaycasts = false;

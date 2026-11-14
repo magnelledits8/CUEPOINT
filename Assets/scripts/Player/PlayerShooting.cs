@@ -33,7 +33,7 @@ public class PlayerShooting : MonoBehaviour
             );
         }
 
-        // Never shoot while the pause menu is open.
+        // Disable shooting when the game is paused
         if (Time.timeScale == 0f)
         {
             wasPaused = true;
@@ -41,7 +41,7 @@ public class PlayerShooting : MonoBehaviour
             return;
         }
 
-        // Detect when the game has just resumed.
+        // Check when the game is unpaused
         if (wasPaused)
         {
             wasPaused = false;
@@ -53,7 +53,7 @@ public class PlayerShooting : MonoBehaviour
             return;
         }
 
-        // Ignore the Continue click until released.
+        // Wait until the Continue click is released
         if (waitForMouseRelease)
         {
             if (Mouse.current.leftButton.isPressed)
@@ -64,13 +64,13 @@ public class PlayerShooting : MonoBehaviour
             waitForMouseRelease = false;
         }
 
-        // Small extra delay after resuming.
+        // Add a short delay before shooting again. If not shots while click continue in menu
         if (Time.unscaledTime - resumeTime < resumeShootDelay)
         {
             return;
         }
 
-        // Normal shooting input.
+        // Shoot when pressing the left mouse button
         if (Mouse.current.leftButton.wasPressedThisFrame)
         {
             ShootRaycast();
@@ -137,7 +137,7 @@ public class PlayerShooting : MonoBehaviour
             );
         }
 
-        // Preserve the existing miss/combo logic.
+        // Reset the combo when the shot misses
         if (!successfulShot)
         {
             if (ScoreHUD.Instance != null)
@@ -159,6 +159,7 @@ public class PlayerShooting : MonoBehaviour
             Screen.height / 2
         );
 
+        //Crosshair
         Texture2D texture = Texture2D.whiteTexture;
 
         GUI.color = crosshairColor;

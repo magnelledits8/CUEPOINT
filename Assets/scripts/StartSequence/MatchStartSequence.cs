@@ -34,7 +34,7 @@ public class MatchStartSequence : MonoBehaviour
     [Tooltip("Positive = delay audio. Negative = start immediately.")]
     public float audioDelay = -0.42f;
 
-    // Shared timing information for DelayedMusicStart.
+    // Share the countdown timing with the music script
     public bool IsCountdownScheduled { get; private set; }
     public double CountdownDspStartTime { get; private set; }
 
@@ -85,7 +85,7 @@ public class MatchStartSequence : MonoBehaviour
             yield break;
         }
 
-        // Prepare music before scheduling the countdown.
+        // Load the music before starting the countdown
         yield return StartCoroutine(
             PrepareAudio(music.MusicSource.clip)
         );
@@ -99,7 +99,7 @@ public class MatchStartSequence : MonoBehaviour
             yield break;
         }
 
-        // Prepare countdown audio.
+        // Load the countdown sound
         if (countdownAudio != null &&
             countdownAudio.clip != null)
         {
@@ -117,7 +117,7 @@ public class MatchStartSequence : MonoBehaviour
             }
         }
 
-        // Keep your existing extra loading wait.
+        // Wait a little longer before starting
         if (loadWaitDuration > 0f)
         {
             yield return new WaitForSecondsRealtime(
@@ -125,11 +125,10 @@ public class MatchStartSequence : MonoBehaviour
             );
         }
 
-        // Give Unity time to prepare scheduled playback.
+        // Give Unity time to prepare the countdown
         CountdownDspStartTime = AudioSettings.dspTime + 0.5;
 
-        // DelayedMusicStart can now schedule music
-        // relative to this exact countdown start.
+        // Let the music script know when the countdown starts
         IsCountdownScheduled = true;
 
         StartCoroutine(FadeBlackScreen());
@@ -214,7 +213,7 @@ public class MatchStartSequence : MonoBehaviour
 
         float animationSpeed = Mathf.Max(1f, framesPerSecond);
 
-        // Preserve your old negative countdown delay.
+        // Skip the first frames if the delay is negative
         int firstFrame = 0;
 
         if (countdownDelay < 0f)
@@ -228,7 +227,7 @@ public class MatchStartSequence : MonoBehaviour
             );
         }
 
-        // A positive delay starts the animation later.
+        // Start the animation later if the delay is positive
         double animationStart =
             CountdownDspStartTime + Mathf.Max(0f, countdownDelay);
 
@@ -244,7 +243,7 @@ public class MatchStartSequence : MonoBehaviour
             countdownDisplay.color = color;
         }
 
-        // Preserve the existing player intro trigger.
+        // Start the player's intro movement
         PlayerRunController player =
             Object.FindFirstObjectByType<PlayerRunController>();
 
@@ -300,11 +299,11 @@ public class MatchStartSequence : MonoBehaviour
         countdownAudio.Stop();
         countdownAudio.playOnAwake = false;
 
-        // Keep the original pitch adjustment.
+        // Adjust the sound speed to match the animation
         countdownAudio.pitch =
             Mathf.Max(1f, framesPerSecond) / 60f;
 
-        // The old code treated negative delays as immediate.
+        // Start the sound immediately if the delay is negative
         double audioStart =
             CountdownDspStartTime + Mathf.Max(0f, audioDelay);
 

@@ -18,8 +18,8 @@ public class CorridorSequenceBuilder : MonoBehaviour
 
     private void Start()
     {
-        // Optional generation when the game starts.
-        // Existing corridors will never be overwritten.
+        // Build the corridor when starting
+        // Keep the old corridor if it already exists
         if (Application.isPlaying && buildOnPlay)
         {
             if (transform.Find(GeneratedName) == null)
@@ -42,8 +42,7 @@ public class CorridorSequenceBuilder : MonoBehaviour
         if (!ValidatePrefabs())
             return;
 
-        // IMPORTANT:
-        // Never overwrite an existing corridor.
+        // Don't replace a corridor that already exists
         Transform existingCorridor =
             transform.Find(GeneratedName);
 
@@ -69,10 +68,10 @@ public class CorridorSequenceBuilder : MonoBehaviour
 
         generatedRoot.SetParent(transform, false);
 
-        // The builder's transform is the first connection point.
+        // Start building from this position
         Transform currentConnection = transform;
 
-        // Repeat the entire prefab sequence.
+        // Repeat the corridor sections
         for (int repeat = 0; repeat < repeatCount; repeat++)
         {
             foreach (GameObject prefab in corridorPrefabs)
@@ -84,7 +83,7 @@ public class CorridorSequenceBuilder : MonoBehaviour
 
                 segment.name = prefab.name;
 
-                // Stretch along local Z.
+                // Change the length of each section
                 Vector3 originalScale =
                     prefab.transform.localScale;
 
@@ -101,7 +100,7 @@ public class CorridorSequenceBuilder : MonoBehaviour
                 Transform exit =
                     segment.transform.Find("ExitPoint");
 
-                // Rotate to match the previous exit.
+                // Match the rotation with the previous section
                 Quaternion rotationOffset =
                     currentConnection.rotation *
                     Quaternion.Inverse(entry.rotation);
@@ -110,12 +109,12 @@ public class CorridorSequenceBuilder : MonoBehaviour
                     rotationOffset *
                     segment.transform.rotation;
 
-                // Connect the entrance to the previous exit.
+                // Connect the new section to the last one
                 segment.transform.position +=
                     currentConnection.position -
                     entry.position;
 
-                // Next section begins at this exit.
+                // Use this exit for the next section
                 currentConnection = exit;
             }
         }

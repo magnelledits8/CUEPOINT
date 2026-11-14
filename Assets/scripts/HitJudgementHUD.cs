@@ -130,7 +130,7 @@ public class HitJudgementHUD : MonoBehaviour
 
         transform.localScale = originalScale * popScale;
 
-        // FADE IN
+        // Fade in the hit result
         float elapsed = 0f;
 
         while (elapsed < fadeInDuration)
@@ -155,7 +155,7 @@ public class HitJudgementHUD : MonoBehaviour
         judgementText.alpha = 1f;
         transform.localScale = originalScale;
 
-        // HOLD
+        // Keep the result on screen for a short time
         if (displayDuration > 0f)
         {
             yield return new WaitForSecondsRealtime(
@@ -163,7 +163,7 @@ public class HitJudgementHUD : MonoBehaviour
             );
         }
 
-        // FADE OUT
+        // Fade out the hit result
         elapsed = 0f;
 
         while (elapsed < fadeOutDuration)

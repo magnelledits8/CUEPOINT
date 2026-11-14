@@ -37,20 +37,20 @@ public class IntroController : MonoBehaviour
 
     private void Awake()
     {
-        // Find the CanvasGroup on the tutorial parent.
+        // Find the CanvasGroup for the tutorial
         if (tutorialPopup != null)
         {
             tutorialGroup =
                 tutorialPopup.GetComponent<CanvasGroup>();
 
-            // Add one automatically if missing.
+            // Add a CanvasGroup if there is none
             if (tutorialGroup == null)
             {
                 tutorialGroup =
                     tutorialPopup.AddComponent<CanvasGroup>();
             }
 
-            // Hide the entire tutorial, including X.
+            // Hide the tutorial and close button
             tutorialGroup.alpha = 0f;
             tutorialGroup.interactable = false;
             tutorialGroup.blocksRaycasts = false;
@@ -76,12 +76,12 @@ public class IntroController : MonoBehaviour
             return;
         }
 
-        // Hide menu buttons at start.
+        // Hide the menu buttons at the start
         buttonsCanvasGroup.alpha = 0f;
         buttonsCanvasGroup.interactable = false;
         buttonsCanvasGroup.blocksRaycasts = false;
 
-        // Display video in the Canvas.
+        // Show the video in the Canvas
         RawImage videoImage = GetComponent<RawImage>();
 
         if (videoImage == null)
@@ -106,10 +106,10 @@ public class IntroController : MonoBehaviour
         videoPlayer.targetTexture = videoTexture;
         videoImage.texture = videoTexture;
 
-        // Play intro.
+        // Play the intro video
         videoPlayer.Play();
 
-        // Show menu, then tutorial if needed.
+        // Show the menu and tutorial
         StartCoroutine(FadeInButtons());
     }
 
@@ -138,11 +138,11 @@ public class IntroController : MonoBehaviour
             tutorialPopup != null &&
             tutorialGroup != null)
         {
-            // Menu remains visible but cannot be clicked.
+            // Keep the menu visible but disable the buttons
             buttonsCanvasGroup.interactable = false;
             buttonsCanvasGroup.blocksRaycasts = false;
 
-            // Wait one second after the button fade.
+            // Wait before showing the tutorial
             yield return new WaitForSecondsRealtime(
                 Mathf.Max(0f, tutorialDelay)
             );
@@ -186,7 +186,7 @@ public class IntroController : MonoBehaviour
         tutorialRoutine = null;
     }
 
-    // Connect this function to your X button.
+    // Close the tutorial with the X button
     public void CloseTutorial()
     {
         if (tutorialPopup == null ||
@@ -241,7 +241,7 @@ public class IntroController : MonoBehaviour
 
         tutorialPopup.SetActive(false);
 
-        // Remember that the tutorial was closed.
+        // Save that the tutorial has been closed
         PlayerPrefs.SetInt(TutorialSeenKey, 1);
         PlayerPrefs.Save();
 
@@ -260,7 +260,7 @@ public class IntroController : MonoBehaviour
         }
     }
 
-    // Use this in Inspector to test the tutorial again.
+    // Reset the tutorial for testing
     [ContextMenu("Reset Tutorial For Testing")]
     public void ResetTutorialForTesting()
     {

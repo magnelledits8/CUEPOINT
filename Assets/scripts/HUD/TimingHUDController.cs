@@ -54,7 +54,7 @@ public class TimingHUDController : MonoBehaviour
             return;
         }
 
-        // Read the same music timeline as the targets.
+        // Use the same music timing as the targets
         double songTime =
             AudioSettings.dspTime -
             targetCueManager.MusicStartDspTime;
@@ -70,7 +70,7 @@ public class TimingHUDController : MonoBehaviour
             double readyTime = cue.ReadyTimeSeconds;
             double timeUntilReady = readyTime - songTime;
 
-            // Show Timing_05 at the exact intended hit time.
+            // Show the last image when the target is ready
             if (timeUntilReady <= 0.0 &&
                 timeUntilReady > -perfectFlashSeconds)
             {
@@ -84,21 +84,21 @@ public class TimingHUDController : MonoBehaviour
             }
         }
 
-        // Perfect timing flash.
+        // Show the perfect timing flash
         if (showPerfect)
         {
             SetImage(Timing_05);
             return;
         }
 
-        // No target approaching.
+        // Show the first image when no target is close
         if (timeUntilNextTarget > chargeLeadSeconds)
         {
             SetImage(Timing_01);
             return;
         }
 
-        // Progress toward the target's Ready Time.
+        // Change the images as the target gets closer to ready time
         float progress = Mathf.Clamp01(
             1f - (float)(timeUntilNextTarget / chargeLeadSeconds)
         );

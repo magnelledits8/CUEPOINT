@@ -12,7 +12,7 @@ public class DelayedMusicStart : MonoBehaviour
     private AudioSource musicAudio;
     private bool musicScheduled;
 
-    // Allows MatchStartSequence to prepare the music.
+    // Let MatchStartSequence access the music
     public AudioSource MusicSource
     {
         get { return musicAudio; }
@@ -45,7 +45,7 @@ public class DelayedMusicStart : MonoBehaviour
 
     private IEnumerator WaitForCountdown(MatchStartSequence sequence)
     {
-        // Wait until the countdown and audio are prepared.
+        // Wait until the countdown is ready
         while (sequence != null && !sequence.IsCountdownScheduled)
         {
             yield return null;
@@ -62,17 +62,17 @@ public class DelayedMusicStart : MonoBehaviour
             yield break;
         }
 
-        // Full countdown duration, including skipped frames.
+        // Calculate the full countdown time
         double fullDuration =
             sequence.countdownFrames.Length /
             (double)Mathf.Max(1f, sequence.framesPerSecond);
 
-        // Preserve the previous music-start relationship.
-        // The original script added a 0.1 second scheduling offset.
+        // Keep the same music timing as before
+        // Add the small delay before starting
         double musicDelay =
             fullDuration - overlapSeconds + 0.1;
 
-        // Prevent scheduling in the past or too close to now.
+        // Make sure the music does not start too early
         double startDsp =
             sequence.CountdownDspStartTime +
             musicDelay;
@@ -132,10 +132,10 @@ public class DelayedMusicStart : MonoBehaviour
         musicAudio.playOnAwake = false;
         musicAudio.timeSamples = 0;
 
-        // Music playback follows the DSP clock, not frame rate.
+        // Start the music using the DSP clock
         musicAudio.PlayScheduled(startDsp);
 
-        // Targets receive exactly the same planned start time.
+        // Use the same start time for the targets
         TargetCueManager manager =
             Object.FindFirstObjectByType<TargetCueManager>();
 

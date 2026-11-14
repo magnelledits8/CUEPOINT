@@ -8,7 +8,7 @@ public class RowBuilder : MonoBehaviour
 
     void Start()
     {
-        // I'm making one pillar for each number from 0 up to count
+        // Create a row of pillars using a for loop
         for (int i = 0; i < count; i++)
         {
             Vector3 position = new Vector3(i * spacing, 1.5f, 8);

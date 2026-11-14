@@ -4,38 +4,38 @@ using UnityEngine.SceneManagement;
 
 public class SceneLoader : MonoBehaviour
 {
-    [Header("Klickljud")]
+    [Header("ClickSound")]
     public AudioClip clickSound;
 
-    // Lärarens metod för att ladda valfri scen
+    // Load the selected scene
     public void LoadScene(string sceneName)
     {
         SceneManager.LoadScene(sceneName);
     }
 
-    // PLAY - Startar spelet
+    // Start the game
     public void PlayGame()
     {
         PlayClickSound();
         LoadScene("Level1");
     }
 
-    // MENU - Öppnar huvudmenyn
+    // Open the main menu
     public void OpenMenu()
     {
         PlayClickSound();
         LoadScene("Menu");
     }
 
-    // QUIT - Avslutar spelet
+    // Close the game
     public void QuitGame()
     {
         PlayClickSound();
-        Debug.Log("Spelet avslutas...");
+        Debug.Log("Game Exit...");
         Application.Quit();
     }
 
-    // Spelar klickljudet
+    // Play the button click sound
     private void PlayClickSound()
     {
         if (clickSound != null)

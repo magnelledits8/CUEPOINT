@@ -80,7 +80,7 @@ public class PauseMenuController : MonoBehaviour
         previousCursorVisible = Cursor.visible;
         previousCursorLockState = Cursor.lockState;
 
-        // Remember which controls were enabled.
+        // Save which player controls are active
         if (mouseLook != null)
         {
             mouseLookWasEnabled = mouseLook.enabled;
@@ -93,7 +93,7 @@ public class PauseMenuController : MonoBehaviour
             playerShooting.enabled = false;
         }
 
-        // Pause the game and audio timeline.
+        // Pause the game and sound
         Time.timeScale = 0f;
         AudioListener.pause = true;
 
@@ -118,8 +118,8 @@ public class PauseMenuController : MonoBehaviour
         if (pauseMenu != null)
             pauseMenu.SetActive(false);
 
-        // Resume time and audio, but keep
-        // player input disabled until click is released.
+        // Resume the game and sound
+        // Wait before enabling player controls
         Time.timeScale = 1f;
         AudioListener.pause = false;
 
@@ -130,22 +130,22 @@ public class PauseMenuController : MonoBehaviour
 
     private IEnumerator ResumeControlsSafely()
     {
-        // Wait until the mouse button is released.
-        // This also works when timeScale was zero.
+        // Wait until the mouse button is released
+        // This also works while the game is paused
         while (Mouse.current != null &&
                Mouse.current.leftButton.isPressed)
         {
             yield return null;
         }
 
-        // Wait one additional frame so the
-        // menu click cannot become a game shot.
+        // Wait one more frame
+        // Stop the menu click from shooting
         yield return null;
 
         Cursor.lockState = previousCursorLockState;
         Cursor.visible = previousCursorVisible;
 
-        // Skip the cursor-lock frame too.
+        // Skip the first frame after locking the mouse
         yield return null;
 
         RestorePlayerControls();
