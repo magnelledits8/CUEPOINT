@@ -3,6 +3,14 @@
   "WorkspaceRootPath": "C:\\Users\\MagnellEdits\\Documents\\CUEPOINT\\",
   "Documents": [
     {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\MagnellEdits\\Documents\\CUEPOINT\\Assets\\scripts\\Targets\\HitSoundListener.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:Assets\\scripts\\Targets\\HitSoundListener.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{B4CD19DA-EE08-5225-FB19-1D0DFA4113DD}|Assembly-CSharp.csproj|c:\\users\\magnelledits\\documents\\cuepoint\\assets\\scripts\\hud\\scorehud.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{B4CD19DA-EE08-5225-FB19-1D0DFA4113DD}|Assembly-CSharp.csproj|solutionrelative:assets\\scripts\\hud\\scorehud.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
       "AbsoluteMoniker": "D:0:0:{B4CD19DA-EE08-5225-FB19-1D0DFA4113DD}|Assembly-CSharp.csproj|c:\\users\\magnelledits\\documents\\cuepoint\\assets\\scripts\\sceneloader.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{B4CD19DA-EE08-5225-FB19-1D0DFA4113DD}|Assembly-CSharp.csproj|solutionrelative:assets\\scripts\\sceneloader.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
@@ -18,24 +26,37 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 0,
+          "SelectedChildIndex": 3,
           "Children": [
             {
               "$type": "Document",
-              "DocumentIndex": 0,
+              "DocumentIndex": 1,
+              "Title": "ScoreHUD.cs",
+              "DocumentMoniker": "C:\\Users\\MagnellEdits\\Documents\\CUEPOINT\\Assets\\scripts\\HUD\\ScoreHUD.cs",
+              "RelativeDocumentMoniker": "Assets\\scripts\\HUD\\ScoreHUD.cs",
+              "ToolTip": "C:\\Users\\MagnellEdits\\Documents\\CUEPOINT\\Assets\\scripts\\HUD\\ScoreHUD.cs",
+              "RelativeToolTip": "Assets\\scripts\\HUD\\ScoreHUD.cs",
+              "ViewState": "AgIAADYAAAAAAAAAAAAxwF4AAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-11-13T15:06:59.296Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 2,
               "Title": "SceneLoader.cs",
               "DocumentMoniker": "C:\\Users\\MagnellEdits\\Documents\\CUEPOINT\\Assets\\scripts\\SceneLoader.cs",
               "RelativeDocumentMoniker": "Assets\\scripts\\SceneLoader.cs",
               "ToolTip": "C:\\Users\\MagnellEdits\\Documents\\CUEPOINT\\Assets\\scripts\\SceneLoader.cs",
               "RelativeToolTip": "Assets\\scripts\\SceneLoader.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAYAAAAXAAAAAAAAAA==",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAABwAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2026-11-13T13:42:15.812Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 1,
+              "DocumentIndex": 3,
               "Title": "CuepointTimingHUDVisual.cs",
               "DocumentMoniker": "C:\\Users\\MagnellEdits\\Documents\\CUEPOINT\\Assets\\scripts\\CuepointTimingHUDVisual.cs",
               "RelativeDocumentMoniker": "Assets\\scripts\\CuepointTimingHUDVisual.cs",
@@ -43,7 +64,19 @@
               "RelativeToolTip": "Assets\\scripts\\CuepointTimingHUDVisual.cs",
               "ViewState": "AgIAAEsBAAAAAAAAAADwv2ABAAAnAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-11-13T13:32:57.348Z",
+              "WhenOpened": "2026-11-13T13:32:57.348Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "HitSoundListener.cs",
+              "DocumentMoniker": "C:\\Users\\MagnellEdits\\Documents\\CUEPOINT\\Assets\\scripts\\Targets\\HitSoundListener.cs",
+              "RelativeDocumentMoniker": "Assets\\scripts\\Targets\\HitSoundListener.cs",
+              "ToolTip": "C:\\Users\\MagnellEdits\\Documents\\CUEPOINT\\Assets\\scripts\\Targets\\HitSoundListener.cs",
+              "RelativeToolTip": "Assets\\scripts\\Targets\\HitSoundListener.cs",
+              "ViewState": "AgIAAAoAAAAAAAAAAAA9wBQAAAATAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-11-13T15:05:27.851Z",
               "EditorCaption": ""
             }
           ]
