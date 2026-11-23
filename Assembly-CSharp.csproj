@@ -72,6 +72,7 @@
     <Compile Include="Assets\Starter Assets\Runtime\Common\BasicRigidBodyPush.cs" />
     <Compile Include="Assets\Starter Assets\Runtime\Mobile\Scripts\Utilities\MobileDisableAutoSwitchControls.cs" />
     <Compile Include="Assets\SciFi Warehouse Kit\Demo\Scripts\PushPhysics.cs" />
+    <Compile Include="Assets\SongSelection\ButtonHoverSwap.cs" />
     <Compile Include="Assets\scripts\SceneLoader.cs" />
     <Compile Include="Assets\StylizedCore\StylizedWoodMonsters\URP\AnimationGallery\Scripts\Effects\Shockwave.cs" />
     <Compile Include="Assets\StylizedCore\StylizedWoodMonsters\URP\AnimationGallery\Scripts\Controllers\EnemySelector.cs" />
@@ -82,6 +83,7 @@
     <Compile Include="Assets\StylizedCore\StylizedWoodMonsters\URP\AnimationGallery\Scripts\Controllers\GroupDisplayManager.cs" />
     <Compile Include="Assets\SmartPoint\Examples\Scripts\CP_AmmoConsume.cs" />
     <Compile Include="Assets\SmartPoint\Examples\Scripts\CP_PlayerExample.cs" />
+    <Compile Include="Assets\SongSelection\SongSelectionController.cs" />
     <Compile Include="Assets\SmartPoint\Core\Utility\MathUtility.cs" />
     <Compile Include="Assets\TextMesh Pro\Examples &amp; Extras\Scripts\VertexJitter.cs" />
     <Compile Include="Assets\scripts\Targets\TorusSplitter.cs" />
@@ -102,6 +104,7 @@
     <Compile Include="Assets\scripts\Player\PlayerJumpAndCrouch.cs" />
     <Compile Include="Assets\scripts\Player\Unused\capsule movement.cs" />
     <Compile Include="Assets\scripts\IntroController.cs" />
+    <Compile Include="Assets\SongSelection\SongItemUI.cs" />
     <Compile Include="Assets\scripts\PauseMenuController.cs" />
     <Compile Include="Assets\scripts\Targets\HitSoundListener.cs" />
     <Compile Include="Assets\TextMesh Pro\Examples &amp; Extras\Scripts\TMP_TextInfoDebugTool.cs" />
@@ -143,6 +146,7 @@
     <Compile Include="Assets\TextMesh Pro\Examples &amp; Extras\Scripts\VertexColorCycler.cs" />
     <Compile Include="Assets\scripts\Rowbuilder.cs" />
     <Compile Include="Assets\SmartPoint\Core\Scripts\GlobalSettings.cs" />
+    <Compile Include="Assets\SongSelection\FixSongTextLayer.cs" />
     <Compile Include="Assets\StylizedCore\StylizedWoodMonsters\URP\AnimationGallery\Scripts\Effects\AnimationEffects.cs" />
     <Compile Include="Assets\StylizedCore\StylizedWoodMonsters\URP\AnimationGallery\Scripts\Entities\SummonedMinion.cs" />
     <Compile Include="Assets\TextMesh Pro\Examples &amp; Extras\Scripts\ObjectSpin.cs" />
