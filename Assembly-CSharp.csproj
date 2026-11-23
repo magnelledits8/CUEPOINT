@@ -145,8 +145,8 @@
     <Compile Include="Assets\TextMesh Pro\Examples &amp; Extras\Scripts\DropdownSample.cs" />
     <Compile Include="Assets\TextMesh Pro\Examples &amp; Extras\Scripts\VertexColorCycler.cs" />
     <Compile Include="Assets\scripts\Rowbuilder.cs" />
-    <Compile Include="Assets\SmartPoint\Core\Scripts\GlobalSettings.cs" />
     <Compile Include="Assets\SongSelection\FixSongTextLayer.cs" />
+    <Compile Include="Assets\SmartPoint\Core\Scripts\GlobalSettings.cs" />
     <Compile Include="Assets\StylizedCore\StylizedWoodMonsters\URP\AnimationGallery\Scripts\Effects\AnimationEffects.cs" />
     <Compile Include="Assets\StylizedCore\StylizedWoodMonsters\URP\AnimationGallery\Scripts\Entities\SummonedMinion.cs" />
     <Compile Include="Assets\TextMesh Pro\Examples &amp; Extras\Scripts\ObjectSpin.cs" />
